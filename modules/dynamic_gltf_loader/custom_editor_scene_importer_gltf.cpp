@@ -50,6 +50,7 @@ void CustomEditorSceneImporterGLTF::get_extensions(List<String> *r_extensions) c
 
 	r_extensions->push_back("gltf");
 	r_extensions->push_back("glb");
+	r_extensions->push_back("vrm");
 }
 
 Error CustomEditorSceneImporterGLTF::_parse_json(const String &p_path, GLTFState &state) {
@@ -3160,7 +3161,7 @@ Node *CustomEditorSceneImporterGLTF::import_scene(const String &p_path, uint32_t
 
 	GLTFState state;
 
-	if (p_path.to_lower().ends_with("glb")) {
+	if (p_path.to_lower().ends_with("glb") || p_path.to_lower().ends_with("vrm")) {
 		//binary file
 		//text file
 		Error err = _parse_glb(p_path, state);

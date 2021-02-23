@@ -1,12 +1,12 @@
 /*************************************************************************/
-/*  platform_config.h                                                    */
+/*  variant_conversion.h                                                 */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
 /*                      https://godotengine.org                          */
 /*************************************************************************/
-/* Copyright (c) 2007-2021 Juan Linietsky, Ariel Manzur.                 */
-/* Copyright (c) 2014-2021 Godot Engine contributors (cf. AUTHORS.md).   */
+/* Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.                 */
+/* Copyright (c) 2014-2020 Godot Engine contributors (cf. AUTHORS.md).   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -28,8 +28,64 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#if defined(__linux__) || defined(__APPLE__)
-#include <alloca.h>
-#else
-#include <malloc.h>
+#ifndef CORE_CONVERSION_OPERATORS_H
+#define CORE_CONVERSION_OPERATORS_H
+
+#include "core/engine.h"
+
+class VariantConversion {
+public:
+	template <class T>
+	static Array to_array(const Vector<T> &p_inp) {
+		Array ret;
+		for (int i = 0; i < p_inp.size(); i++) {
+			ret.push_back(p_inp[i]);
+		}
+		return ret;
+	}
+
+	template <class T>
+	static Array to_array(const Set<T> &p_inp) {
+		Array ret;
+		typename Set<T>::Element *elem = p_inp.front();
+		while (elem) {
+			ret.push_back(elem->get());
+			elem = elem->next();
+		}
+		return ret;
+	}
+
+	template <class T>
+	static void set_from_array(Vector<T> &r_out, const Array &p_inp) {
+		r_out.clear();
+		for (int i = 0; i < p_inp.size(); i++) {
+			r_out.push_back(p_inp[i]);
+		}
+	}
+
+	template <class T>
+	static void set_from_array(Set<T> &r_out, const Array &p_inp) {
+		r_out.clear();
+		for (int i = 0; i < p_inp.size(); i++) {
+			r_out.insert(p_inp[i]);
+		}
+	}
+	template <class K, class V>
+	static Dictionary to_dict(const Map<K, V> &p_inp) {
+		Dictionary ret;
+		for (typename Map<K, V>::Element *E = p_inp.front(); E; E = E->next()) {
+			ret[E->key()] = E->value();
+		}
+		return ret;
+	}
+
+	template <class K, class V>
+	static void set_from_dict(Map<K, V> &r_out, const Dictionary &p_inp) {
+		r_out.clear();
+		Array keys = p_inp.keys();
+		for (int i = 0; i < keys.size(); i++) {
+			r_out[keys[i]] = p_inp[keys[i]];
+		}
+	}
+};
 #endif

@@ -1,12 +1,12 @@
 /*************************************************************************/
-/*  platform_config.h                                                    */
+/*  gltf_animation.h                                                     */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
 /*                      https://godotengine.org                          */
 /*************************************************************************/
-/* Copyright (c) 2007-2021 Juan Linietsky, Ariel Manzur.                 */
-/* Copyright (c) 2014-2021 Godot Engine contributors (cf. AUTHORS.md).   */
+/* Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.                 */
+/* Copyright (c) 2014-2020 Godot Engine contributors (cf. AUTHORS.md).   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -28,8 +28,48 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#if defined(__linux__) || defined(__APPLE__)
-#include <alloca.h>
-#else
-#include <malloc.h>
+#ifndef GLTF_ANIMATION_H
+#define GLTF_ANIMATION_H
+
+#include "core/resource.h"
+
+class GLTFAnimation : public Resource {
+	GDCLASS(GLTFAnimation, Resource);
+
+protected:
+	static void _bind_methods();
+
+public:
+	enum Interpolation {
+		INTERP_LINEAR,
+		INTERP_STEP,
+		INTERP_CATMULLROMSPLINE,
+		INTERP_CUBIC_SPLINE
+	};
+
+	template <class T>
+	struct Channel {
+		Interpolation interpolation;
+		Vector<float> times;
+		Vector<T> values;
+	};
+
+	struct Track {
+		Channel<Vector3> translation_track;
+		Channel<Quat> rotation_track;
+		Channel<Vector3> scale_track;
+		Vector<Channel<float> > weight_tracks;
+	};
+
+public:
+	bool get_loop() const { return loop; }
+	void set_loop(bool p_val) { loop = p_val; }
+	Map<int, GLTFAnimation::Track> &get_tracks() { return tracks; }
+	GLTFAnimation() {
+	}
+
+private:
+	bool loop = false;
+	Map<int, Track> tracks;
+};
 #endif

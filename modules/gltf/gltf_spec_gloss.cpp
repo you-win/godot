@@ -1,12 +1,12 @@
 /*************************************************************************/
-/*  platform_config.h                                                    */
+/*  gltf_spec_gloss.cpp                                                  */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
 /*                      https://godotengine.org                          */
 /*************************************************************************/
-/* Copyright (c) 2007-2021 Juan Linietsky, Ariel Manzur.                 */
-/* Copyright (c) 2014-2021 Godot Engine contributors (cf. AUTHORS.md).   */
+/* Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.                 */
+/* Copyright (c) 2014-2020 Godot Engine contributors (cf. AUTHORS.md).   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -28,8 +28,26 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#if defined(__linux__) || defined(__APPLE__)
-#include <alloca.h>
-#else
-#include <malloc.h>
-#endif
+#include "gltf_spec_gloss.h"
+#include "gltf_spec_gloss.h"
+
+
+void GLTFSpecGloss::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_diffuse_img"), &GLTFSpecGloss::get_diffuse_img);
+	ClassDB::bind_method(D_METHOD("set_diffuse_img", "diffuse_img"), &GLTFSpecGloss::set_diffuse_img);
+	ClassDB::bind_method(D_METHOD("get_diffuse_factor"), &GLTFSpecGloss::get_diffuse_factor);
+	ClassDB::bind_method(D_METHOD("set_diffuse_factor", "diffuse_factor"), &GLTFSpecGloss::set_diffuse_factor);
+	ClassDB::bind_method(D_METHOD("get_gloss_factor"), &GLTFSpecGloss::get_gloss_factor);
+	ClassDB::bind_method(D_METHOD("set_gloss_factor", "gloss_factor"), &GLTFSpecGloss::set_gloss_factor);
+	ClassDB::bind_method(D_METHOD("get_specular_factor"), &GLTFSpecGloss::get_specular_factor);
+	ClassDB::bind_method(D_METHOD("set_specular_factor", "specular_factor"), &GLTFSpecGloss::set_specular_factor);
+	ClassDB::bind_method(D_METHOD("get_spec_gloss_img"), &GLTFSpecGloss::get_spec_gloss_img);
+	ClassDB::bind_method(D_METHOD("set_spec_gloss_img", "spec_gloss_img"), &GLTFSpecGloss::set_spec_gloss_img);
+
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "diffuse_img"), "set_diffuse_img", "get_diffuse_img"); // Ref<Image>
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "diffuse_factor"), "set_diffuse_factor", "get_diffuse_factor"); // Color
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "gloss_factor"), "set_gloss_factor", "get_gloss_factor"); // float
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "specular_factor"), "set_specular_factor", "get_specular_factor"); // Color
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "spec_gloss_img"), "set_spec_gloss_img", "get_spec_gloss_img"); // Ref<Image>
+
+}

@@ -1,12 +1,12 @@
 /*************************************************************************/
-/*  platform_config.h                                                    */
+/*  gltf_texture.h                                                       */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
 /*                      https://godotengine.org                          */
 /*************************************************************************/
-/* Copyright (c) 2007-2021 Juan Linietsky, Ariel Manzur.                 */
-/* Copyright (c) 2014-2021 Godot Engine contributors (cf. AUTHORS.md).   */
+/* Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.                 */
+/* Copyright (c) 2014-2020 Godot Engine contributors (cf. AUTHORS.md).   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -28,8 +28,29 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#if defined(__linux__) || defined(__APPLE__)
-#include <alloca.h>
-#else
-#include <malloc.h>
+#ifndef GLTF_TEXTURE_H
+#define GLTF_TEXTURE_H
+
+#include "core/resource.h"
+#include "gltf_document.h"
+
+
+class GLTFTexture : public Resource {
+	GDCLASS(GLTFTexture, Resource);
+
+protected:
+	static void _bind_methods();
+
+public:
+	GLTFImageIndex src_image;
+
+
+	int get_src_image() {
+		return this->src_image;
+	}
+	void set_src_image(int p_src_image) {
+		this->src_image = p_src_image;
+	}
+};
+
 #endif

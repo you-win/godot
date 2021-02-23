@@ -1,12 +1,12 @@
 /*************************************************************************/
-/*  platform_config.h                                                    */
+/*  gltf_camera.cpp                                                      */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
 /*                      https://godotengine.org                          */
 /*************************************************************************/
-/* Copyright (c) 2007-2021 Juan Linietsky, Ariel Manzur.                 */
-/* Copyright (c) 2014-2021 Godot Engine contributors (cf. AUTHORS.md).   */
+/* Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.                 */
+/* Copyright (c) 2014-2020 Godot Engine contributors (cf. AUTHORS.md).   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -28,8 +28,25 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#if defined(__linux__) || defined(__APPLE__)
-#include <alloca.h>
-#else
-#include <malloc.h>
-#endif
+#include "gltf_camera.h"
+#include "gltf_camera.h"
+
+
+
+
+void GLTFCamera::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_perspective"), &GLTFCamera::get_perspective);
+	ClassDB::bind_method(D_METHOD("set_perspective", "perspective"), &GLTFCamera::set_perspective);
+	ClassDB::bind_method(D_METHOD("get_fov_size"), &GLTFCamera::get_fov_size);
+	ClassDB::bind_method(D_METHOD("set_fov_size", "fov_size"), &GLTFCamera::set_fov_size);
+	ClassDB::bind_method(D_METHOD("get_zfar"), &GLTFCamera::get_zfar);
+	ClassDB::bind_method(D_METHOD("set_zfar", "zfar"), &GLTFCamera::set_zfar);
+	ClassDB::bind_method(D_METHOD("get_znear"), &GLTFCamera::get_znear);
+	ClassDB::bind_method(D_METHOD("set_znear", "znear"), &GLTFCamera::set_znear);
+
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "perspective"), "set_perspective", "get_perspective"); // bool
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "fov_size"), "set_fov_size", "get_fov_size"); // float
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "zfar"), "set_zfar", "get_zfar"); // float
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "znear"), "set_znear", "get_znear"); // float
+
+}
