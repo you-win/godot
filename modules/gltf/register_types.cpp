@@ -30,7 +30,7 @@
 
 #include "register_types.h"
 
-// #include "editor/editor_node.h"
+#include "editor/editor_node.h"
 #include "editor_scene_exporter_gltf_plugin.h"
 #include "editor_scene_importer_gltf.h"
 #include "gltf_accessor.h"
