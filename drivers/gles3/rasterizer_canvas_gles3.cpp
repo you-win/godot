@@ -1194,12 +1194,9 @@ void RasterizerCanvasGLES3::render_batches(Item::Command *const *p_commands, Ite
 void RasterizerCanvasGLES3::render_joined_item(const BItemJoined &p_bij, RenderItemState &r_ris) {
 	storage->info.render._2d_item_count++;
 
-#ifdef DEBUG_ENABLED
+#if defined(TOOLS_ENABLED) && defined(DEBUG_ENABLED)
 	if (bdata.diagnose_frame) {
-		bdata.frame_string += "\tjoined_item " + itos(p_bij.num_item_refs) + " refs\n";
-		if (p_bij.z_index != 0) {
-			bdata.frame_string += "\t\t(z " + itos(p_bij.z_index) + ")\n";
-		}
+		bdata.frame_string += _diagnose_make_item_joined_string(p_bij);
 	}
 #endif
 
@@ -1459,7 +1456,7 @@ void RasterizerCanvasGLES3::render_joined_item(const BItemJoined &p_bij, RenderI
 	// using software transform?
 	// (i.e. don't send the transform matrix, send identity, and either use baked verts,
 	// or large fvf where the transform is done in the shader from transform stored in the fvf.)
-	if (!p_bij.use_hardware_transform()) {
+	if (!p_bij.is_single_item()) {
 		state.final_transform = Transform2D();
 		// final_modulate will be baked per item ref so the final_modulate can be an identity color
 		state.canvas_item_modulate = Color(1, 1, 1, 1);
@@ -2340,6 +2337,12 @@ void RasterizerCanvasGLES3::initialize() {
 
 		glBindVertexArray(0);
 	} // for vao
+
+	// deal with ninepatch mode option
+	if (bdata.settings_ninepatch_mode == 1) {
+		state.canvas_shader.add_custom_define("#define USE_NINEPATCH_SCALING\n");
+	}
+
 	gl_checkerror();
 }
 

@@ -532,7 +532,10 @@ ObjectID SpatialEditorViewport::_select_ray(const Point2 &p_pos, bool p_append, 
 			continue;
 
 		if (dist < closest_dist) {
-			item = edited_scene->get_deepest_editable_node(Object::cast_to<Node>(spat));
+			item = Object::cast_to<Node>(spat);
+			if (item != edited_scene) {
+				item = edited_scene->get_deepest_editable_node(item);
+			}
 
 			closest = item->get_instance_id();
 			closest_dist = dist;
@@ -687,7 +690,10 @@ void SpatialEditorViewport::_select_region() {
 		if (!sp || _is_node_locked(sp))
 			continue;
 
-		Node *item = edited_scene->get_deepest_editable_node(Object::cast_to<Node>(sp));
+		Node *item = Object::cast_to<Node>(sp);
+		if (item != edited_scene) {
+			item = edited_scene->get_deepest_editable_node(item);
+		}
 
 		// Replace the node by the group if grouped
 		if (item->is_class("Spatial")) {
@@ -1464,7 +1470,7 @@ void SpatialEditorViewport::_sinput(const Ref<InputEvent> &p_event) {
 
 				Vector3 ray_pos = _get_ray_pos(m->get_position());
 				Vector3 ray = _get_ray(m->get_position());
-				float snap = EDITOR_GET("interface/inspector/default_float_step");
+				double snap = EDITOR_GET("interface/inspector/default_float_step");
 				int snap_step_decimals = Math::range_step_decimals(snap);
 
 				switch (_edit.mode) {
@@ -1765,7 +1771,7 @@ void SpatialEditorViewport::_sinput(const Ref<InputEvent> &p_event) {
 						Vector3 y_axis = (click - _edit.center).normalized();
 						Vector3 x_axis = plane.normal.cross(y_axis).normalized();
 
-						float angle = Math::atan2(x_axis.dot(intersection - _edit.center), y_axis.dot(intersection - _edit.center));
+						double angle = Math::atan2(x_axis.dot(intersection - _edit.center), y_axis.dot(intersection - _edit.center));
 
 						if (_edit.snap || spatial_editor->is_snap_enabled()) {
 							snap = spatial_editor->get_rotate_snap();
@@ -1841,10 +1847,8 @@ void SpatialEditorViewport::_sinput(const Ref<InputEvent> &p_event) {
 
 		} else if (m->get_button_mask() & BUTTON_MASK_MIDDLE) {
 
+			const int mod = _get_key_modifier(m);
 			if (nav_scheme == NAVIGATION_GODOT) {
-
-				const int mod = _get_key_modifier(m);
-
 				if (mod == _get_key_modifier_setting("editors/3d/navigation/pan_modifier")) {
 					nav_mode = NAVIGATION_PAN;
 				} else if (mod == _get_key_modifier_setting("editors/3d/navigation/zoom_modifier")) {
@@ -1855,8 +1859,9 @@ void SpatialEditorViewport::_sinput(const Ref<InputEvent> &p_event) {
 				}
 
 			} else if (nav_scheme == NAVIGATION_MAYA) {
-				if (m->get_alt())
+				if (mod == _get_key_modifier_setting("editors/3d/navigation/pan_modifier")) {
 					nav_mode = NAVIGATION_PAN;
+				}
 			}
 
 		} else if (EditorSettings::get_singleton()->get("editors/3d/navigation/emulate_3_button_mouse")) {
@@ -4465,7 +4470,12 @@ void _update_all_gizmos(Node *p_node) {
 
 void SpatialEditor::update_all_gizmos(Node *p_node) {
 	if (!p_node) {
-		p_node = SceneTree::get_singleton()->get_root();
+		if (SceneTree::get_singleton()) {
+			p_node = SceneTree::get_singleton()->get_root();
+		} else {
+			// No scene tree, so nothing to update.
+			return;
+		}
 	}
 	_update_all_gizmos(p_node);
 }
@@ -5659,7 +5669,7 @@ void SpatialEditor::_init_grid() {
 	// Offsets division_level for bigger or smaller grids.
 	// Default value is -0.2. -1.0 gives Blender-like behavior, 0.5 gives huge grids.
 	real_t division_level_bias = EditorSettings::get_singleton()->get("editors/3d/grid_division_level_bias");
-	// Default largest grid size is 100m, 10^2 (default value is 2).
+	// Default largest grid size is 8^2 when primary_grid_steps is 8 (64m apart, so primary grid lines are 512m apart).
 	int division_level_max = EditorSettings::get_singleton()->get("editors/3d/grid_division_level_max");
 	// Default smallest grid size is 1cm, 10^-2 (default value is -2).
 	int division_level_min = EditorSettings::get_singleton()->get("editors/3d/grid_division_level_min");
@@ -6206,6 +6216,7 @@ void SpatialEditor::_register_all_gizmos() {
 	add_gizmo_plugin(Ref<ReflectionProbeGizmoPlugin>(memnew(ReflectionProbeGizmoPlugin)));
 	add_gizmo_plugin(Ref<GIProbeGizmoPlugin>(memnew(GIProbeGizmoPlugin)));
 	add_gizmo_plugin(Ref<BakedIndirectLightGizmoPlugin>(memnew(BakedIndirectLightGizmoPlugin)));
+	add_gizmo_plugin(Ref<CollisionObjectGizmoPlugin>(memnew(CollisionObjectGizmoPlugin)));
 	add_gizmo_plugin(Ref<CollisionShapeSpatialGizmoPlugin>(memnew(CollisionShapeSpatialGizmoPlugin)));
 	add_gizmo_plugin(Ref<CollisionPolygonSpatialGizmoPlugin>(memnew(CollisionPolygonSpatialGizmoPlugin)));
 	add_gizmo_plugin(Ref<NavigationMeshSpatialGizmoPlugin>(memnew(NavigationMeshSpatialGizmoPlugin)));

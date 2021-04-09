@@ -41,22 +41,14 @@ static Transform2D _canvas_get_transform(VisualServerViewport::Viewport *p_viewp
 
 	float scale = 1.0;
 
-	bool snap = Engine::get_singleton()->get_snap_2d_viewports();
-
 	if (p_viewport->canvas_map.has(p_canvas->parent)) {
 
 		Transform2D c_xform = p_viewport->canvas_map[p_canvas->parent].transform;
-		if (snap) {
-			c_xform.elements[2] = c_xform.elements[2].floor();
-		}
 		xf = xf * c_xform;
 		scale = p_canvas->parent_scale;
 	}
 
 	Transform2D c_xform = p_canvas_data->transform;
-	if (snap) {
-		c_xform.elements[2] = c_xform.elements[2].floor();
-	}
 	xf = xf * c_xform;
 
 	if (scale != 1.0 && !VSG::canvas->disable_scale) {
@@ -322,7 +314,7 @@ void VisualServerViewport::draw_viewports() {
 			ARVRInterface::Eyes leftOrMono = arvr_interface->is_stereo() ? ARVRInterface::EYE_LEFT : ARVRInterface::EYE_MONO;
 
 			// check for an external texture destination for our left eye/mono
-			VSG::storage->render_target_set_external_texture(vp->render_target, arvr_interface->get_external_texture_for_eye(leftOrMono));
+			VSG::storage->render_target_set_external_texture(vp->render_target, arvr_interface->get_external_texture_for_eye(leftOrMono), arvr_interface->get_external_depth_for_eye(leftOrMono));
 
 			// set our render target as current
 			VSG::rasterizer->set_current_render_target(vp->render_target);
@@ -334,7 +326,7 @@ void VisualServerViewport::draw_viewports() {
 			// render right eye
 			if (leftOrMono == ARVRInterface::EYE_LEFT) {
 				// check for an external texture destination for our right eye
-				VSG::storage->render_target_set_external_texture(vp->render_target, arvr_interface->get_external_texture_for_eye(ARVRInterface::EYE_RIGHT));
+				VSG::storage->render_target_set_external_texture(vp->render_target, arvr_interface->get_external_texture_for_eye(ARVRInterface::EYE_RIGHT), arvr_interface->get_external_depth_for_eye(ARVRInterface::EYE_RIGHT));
 
 				// commit for eye may have changed the render target
 				VSG::rasterizer->set_current_render_target(vp->render_target);
@@ -346,7 +338,7 @@ void VisualServerViewport::draw_viewports() {
 			// and for our frame timing, mark when we've finished committing our eyes
 			ARVRServer::get_singleton()->_mark_commit();
 		} else {
-			VSG::storage->render_target_set_external_texture(vp->render_target, 0);
+			VSG::storage->render_target_set_external_texture(vp->render_target, 0, 0);
 			VSG::rasterizer->set_current_render_target(vp->render_target);
 
 			VSG::scene_render->set_debug_draw_mode(vp->debug_draw);

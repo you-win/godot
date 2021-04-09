@@ -104,6 +104,9 @@ Node *EditorSceneImporterFBX::import_scene(const String &p_path, uint32_t p_flag
 
 		bool is_binary = false;
 		data.resize(f->get_len());
+
+		ERR_FAIL_COND_V(data.size() < 64, NULL);
+
 		f->get_buffer(data.write().ptr(), data.size());
 		PoolByteArray fbx_header;
 		fbx_header.resize(64);
@@ -1177,7 +1180,7 @@ Spatial *EditorSceneImporterFBX::_generate_scene(
 								max_duration = animation_track_time;
 							}
 
-							rot_values.push_back(final_rotation);
+							rot_values.push_back(final_rotation.normalized());
 							rot_times.push_back(animation_track_time);
 						}
 

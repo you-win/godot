@@ -70,7 +70,9 @@ Dictionary Control::_edit_get_state() const {
 }
 
 void Control::_edit_set_state(const Dictionary &p_state) {
-
+	ERR_FAIL_COND((p_state.size() <= 0) ||
+				  !p_state.has("rotation") || !p_state.has("scale") ||
+				  !p_state.has("pivot") || !p_state.has("anchors") || !p_state.has("margins"));
 	Dictionary state = p_state;
 
 	set_rotation(state["rotation"]);
@@ -91,6 +93,7 @@ void Control::_edit_set_state(const Dictionary &p_state) {
 
 void Control::_edit_set_position(const Point2 &p_position) {
 #ifdef TOOLS_ENABLED
+	ERR_FAIL_COND_MSG(!Engine::get_singleton()->is_editor_hint(), "This function can only be used from editor plugins.");
 	set_position(p_position, CanvasItemEditor::get_singleton()->is_anchors_mode_enabled());
 #else
 	// Unlikely to happen. TODO: enclose all _edit_ functions into TOOLS_ENABLED
@@ -112,6 +115,7 @@ Size2 Control::_edit_get_scale() const {
 
 void Control::_edit_set_rect(const Rect2 &p_edit_rect) {
 #ifdef TOOLS_ENABLED
+	ERR_FAIL_COND_MSG(!Engine::get_singleton()->is_editor_hint(), "This function can only be used from editor plugins.");
 	set_position((get_position() + get_transform().basis_xform(p_edit_rect.position)).snapped(Vector2(1, 1)), CanvasItemEditor::get_singleton()->is_anchors_mode_enabled());
 	set_size(p_edit_rect.size.snapped(Vector2(1, 1)), CanvasItemEditor::get_singleton()->is_anchors_mode_enabled());
 #else
@@ -433,10 +437,6 @@ void Control::_resize(const Size2 &p_size) {
 	_size_changed();
 }
 
-void Control::_clear_size_warning() {
-	data.size_warning = false;
-}
-
 //moved theme configuration here, so controls can set up even if still not inside active scene
 
 void Control::add_child_notify(Node *p_child) {
@@ -488,9 +488,7 @@ void Control::_notification(int p_notification) {
 		case NOTIFICATION_EXIT_TREE: {
 
 			get_viewport()->_gui_remove_control(this);
-		} break;
-		case NOTIFICATION_READY: {
-			connect("ready", this, "_clear_size_warning", varray(), CONNECT_DEFERRED | CONNECT_ONESHOT);
+
 		} break;
 
 		case NOTIFICATION_ENTER_CANVAS: {
@@ -1835,11 +1833,6 @@ void Control::set_position(const Size2 &p_point, bool p_keep_margins) {
 }
 
 void Control::_set_size(const Size2 &p_size) {
-#ifdef DEBUG_ENABLED
-	if (data.size_warning) {
-		WARN_PRINT("Adjusting the size of Control nodes before they are fully initialized is unreliable. Consider deferring it with set_deferred().");
-	}
-#endif
 	set_size(p_size);
 }
 
@@ -2620,7 +2613,7 @@ void Control::set_pass_on_modal_close_click(bool p_pass_on) {
 	data.pass_on_modal_close_click = p_pass_on;
 }
 
-bool Control::pass_on_modal_close_click() const {
+bool Control::get_pass_on_modal_close_click() const {
 
 	return data.pass_on_modal_close_click;
 }
@@ -2948,6 +2941,9 @@ void Control::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_mouse_filter", "filter"), &Control::set_mouse_filter);
 	ClassDB::bind_method(D_METHOD("get_mouse_filter"), &Control::get_mouse_filter);
 
+	ClassDB::bind_method(D_METHOD("set_pass_on_modal_close_click", "enabled"), &Control::set_pass_on_modal_close_click);
+	ClassDB::bind_method(D_METHOD("get_pass_on_modal_close_click"), &Control::get_pass_on_modal_close_click);
+
 	ClassDB::bind_method(D_METHOD("set_clip_contents", "enable"), &Control::set_clip_contents);
 	ClassDB::bind_method(D_METHOD("is_clipping_contents"), &Control::is_clipping_contents);
 
@@ -2963,8 +2959,6 @@ void Control::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_theme_changed"), &Control::_theme_changed);
 
 	ClassDB::bind_method(D_METHOD("_override_changed"), &Control::_override_changed);
-
-	ClassDB::bind_method(D_METHOD("_clear_size_warning"), &Control::_clear_size_warning);
 
 	BIND_VMETHOD(MethodInfo("_gui_input", PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_RESOURCE_TYPE, "InputEvent")));
 	BIND_VMETHOD(MethodInfo(Variant::VECTOR2, "_get_minimum_size"));
@@ -3021,6 +3015,9 @@ void Control::_bind_methods() {
 	ADD_GROUP("Mouse", "mouse_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "mouse_filter", PROPERTY_HINT_ENUM, "Stop,Pass,Ignore"), "set_mouse_filter", "get_mouse_filter");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "mouse_default_cursor_shape", PROPERTY_HINT_ENUM, "Arrow,Ibeam,Pointing hand,Cross,Wait,Busy,Drag,Can drop,Forbidden,Vertical resize,Horizontal resize,Secondary diagonal resize,Main diagonal resize,Move,Vertical split,Horizontal split,Help"), "set_default_cursor_shape", "get_default_cursor_shape");
+
+	ADD_GROUP("Input", "input_");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "input_pass_on_modal_close_click"), "set_pass_on_modal_close_click", "get_pass_on_modal_close_click");
 
 	ADD_GROUP("Size Flags", "size_flags_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "size_flags_horizontal", PROPERTY_HINT_FLAGS, "Fill,Expand,Shrink Center,Shrink End"), "set_h_size_flags", "get_h_size_flags");

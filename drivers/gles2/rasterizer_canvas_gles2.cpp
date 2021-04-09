@@ -1942,12 +1942,9 @@ void RasterizerCanvasGLES2::render_joined_item(const BItemJoined &p_bij, RenderI
 
 	storage->info.render._2d_item_count++;
 
-#ifdef DEBUG_ENABLED
+#if defined(TOOLS_ENABLED) && defined(DEBUG_ENABLED)
 	if (bdata.diagnose_frame) {
-		bdata.frame_string += "\tjoined_item " + itos(p_bij.num_item_refs) + " refs\n";
-		if (p_bij.z_index != 0) {
-			bdata.frame_string += "\t\t(z " + itos(p_bij.z_index) + ")\n";
-		}
+		bdata.frame_string += _diagnose_make_item_joined_string(p_bij);
 	}
 #endif
 
@@ -2174,7 +2171,7 @@ void RasterizerCanvasGLES2::render_joined_item(const BItemJoined &p_bij, RenderI
 	// using software transform?
 	// (i.e. don't send the transform matrix, send identity, and either use baked verts,
 	// or large fvf where the transform is done in the shader from transform stored in the fvf.)
-	if (!p_bij.use_hardware_transform()) {
+	if (!p_bij.is_single_item()) {
 		state.uniforms.modelview_matrix = Transform2D();
 		// final_modulate will be baked per item ref so the final_modulate can be an identity color
 		state.uniforms.final_modulate = Color(1, 1, 1, 1);
@@ -2199,7 +2196,7 @@ void RasterizerCanvasGLES2::render_joined_item(const BItemJoined &p_bij, RenderI
 		VS::CanvasLightMode mode = VS::CANVAS_LIGHT_MODE_ADD;
 
 		// we leave this set to 1, 1, 1, 1 if using software because the colors are baked into the vertices
-		if (p_bij.use_hardware_transform()) {
+		if (p_bij.is_single_item()) {
 			state.uniforms.final_modulate = ci->final_modulate; // remove the canvas modulate
 		}
 

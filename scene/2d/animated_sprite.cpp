@@ -452,7 +452,7 @@ void AnimatedSprite::_notification(int p_what) {
 			if (centered)
 				ofs -= s / 2;
 
-			if (Engine::get_singleton()->get_snap_2d_transforms()) {
+			if (Engine::get_singleton()->get_use_gpu_pixel_snap()) {
 				ofs = ofs.floor();
 			}
 			Rect2 dst_rect(ofs, s);
@@ -605,12 +605,11 @@ bool AnimatedSprite::_is_playing() const {
 }
 
 void AnimatedSprite::play(const StringName &p_animation, const bool p_backwards) {
-
 	backwards = p_backwards;
 
 	if (p_animation) {
 		set_animation(p_animation);
-		if (backwards && get_frame() == 0)
+		if (frames.is_valid() && backwards && get_frame() == 0)
 			set_frame(frames->get_frame_count(p_animation) - 1);
 	}
 

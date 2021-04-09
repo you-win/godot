@@ -620,7 +620,6 @@ Error ProjectSettings::_load_settings_text_or_binary(const String &p_text_path, 
 	} else if (err != ERR_FILE_NOT_FOUND) {
 		// If the file exists but can't be loaded, we want to know it.
 		ERR_PRINT("Couldn't load file '" + p_bin_path + "', error code " + itos(err) + ".");
-		return err;
 	}
 
 	// Fallback to text-based project.godot file if binary was not found.
@@ -629,7 +628,6 @@ Error ProjectSettings::_load_settings_text_or_binary(const String &p_text_path, 
 		return OK;
 	} else if (err != ERR_FILE_NOT_FOUND) {
 		ERR_PRINT("Couldn't load file '" + p_text_path + "', error code " + itos(err) + ".");
-		return err;
 	}
 
 	return err;
@@ -884,14 +882,29 @@ Error ProjectSettings::save_custom(const String &p_path, const CustomMap &p_cust
 		custom_features += f;
 	}
 
-	if (p_path.ends_with(".godot"))
+	if (p_path.ends_with(".godot") || p_path.ends_with("override.cfg")) {
 		return _save_settings_text(p_path, props, p_custom, custom_features);
-	else if (p_path.ends_with(".binary"))
+	} else if (p_path.ends_with(".binary")) {
 		return _save_settings_binary(p_path, props, p_custom, custom_features);
-	else {
+	} else {
 
 		ERR_FAIL_V_MSG(ERR_FILE_UNRECOGNIZED, "Unknown config file format: " + p_path + ".");
 	}
+}
+
+Variant _GLOBAL_DEF_ALIAS(const String &p_var, const String &p_old_name, const Variant &p_default, bool p_restart_if_changed) {
+	// if the new name setting isn't present, try the old one
+	if (!ProjectSettings::get_singleton()->has_setting(p_var)) {
+
+		if (ProjectSettings::get_singleton()->has_setting(p_old_name)) {
+
+			// if the old setting is present, get the value and set it in the new setting
+			Variant value = ProjectSettings::get_singleton()->get(p_old_name);
+			ProjectSettings::get_singleton()->set(p_var, value);
+		}
+	}
+
+	return _GLOBAL_DEF(p_var, p_default, p_restart_if_changed);
 }
 
 Variant _GLOBAL_DEF(const String &p_var, const Variant &p_default, bool p_restart_if_changed) {

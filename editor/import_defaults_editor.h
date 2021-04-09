@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  resource_importer_csv.h                                              */
+/*  import_defaults_editor.h                                             */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,30 +28,45 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef RESOURCEIMPORTERCSV_H
-#define RESOURCEIMPORTERCSV_H
+#ifndef IMPORT_DEFAULTS_EDITOR_H
+#define IMPORT_DEFAULTS_EDITOR_H
 
-#include "core/io/resource_importer.h"
+#include "core/undo_redo.h"
+#include "editor/editor_data.h"
+#include "editor/editor_plugin_settings.h"
+#include "editor/editor_sectioned_inspector.h"
+#include "editor_autoload_settings.h"
+#include "scene/gui/center_container.h"
+#include "scene/gui/option_button.h"
 
-class ResourceImporterCSV : public ResourceImporter {
-	GDCLASS(ResourceImporterCSV, ResourceImporter);
+class ImportDefaultsEditorSettings;
+
+class ImportDefaultsEditor : public VBoxContainer {
+	GDCLASS(ImportDefaultsEditor, VBoxContainer)
+
+	OptionButton *importers;
+	Button *save_defaults;
+	Button *reset_defaults;
+
+	EditorInspector *inspector;
+
+	ImportDefaultsEditorSettings *settings;
+
+	void _update_importer();
+	void _importer_selected(int p_index);
+
+	void _reset();
+	void _save();
+
+protected:
+	void _notification(int p_what);
+	static void _bind_methods();
 
 public:
-	virtual String get_importer_name() const;
-	virtual String get_visible_name() const;
-	virtual void get_recognized_extensions(List<String> *p_extensions) const;
-	virtual String get_save_extension() const;
-	virtual String get_resource_type() const;
+	void clear();
 
-	virtual int get_preset_count() const;
-	virtual String get_preset_name(int p_idx) const;
-
-	virtual void get_import_options(List<ImportOption> *r_options, int p_preset = 0) const;
-	virtual bool get_option_visibility(const String &p_option, const Map<StringName, Variant> &p_options) const;
-
-	virtual Error import(const String &p_source_file, const String &p_save_path, const Map<StringName, Variant> &p_options, List<String> *r_platform_variants, List<String> *r_gen_files = NULL, Variant *r_metadata = NULL);
-
-	ResourceImporterCSV();
+	ImportDefaultsEditor();
+	~ImportDefaultsEditor();
 };
 
-#endif // RESOURCEIMPORTERCSV_H
+#endif // IMPORT_DEFAULTS_EDITOR_H

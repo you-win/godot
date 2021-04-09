@@ -6,12 +6,13 @@
 # Julius Stopforth <jjstopforth@gmail.com>, 2018.
 # Isa Tippens <isatippens2@gmail.com>, 2019.
 # Henry Geyser <thegoat187@gmail.com>, 2020.
+# Henry LeRoux <henry.leroux@ocsbstudent.ca>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-12-01 20:29+0000\n"
-"Last-Translator: Henry Geyser <thegoat187@gmail.com>\n"
+"PO-Revision-Date: 2021-04-05 14:28+0000\n"
+"Last-Translator: Henry LeRoux <henry.leroux@ocsbstudent.ca>\n"
 "Language-Team: Afrikaans <https://hosted.weblate.org/projects/godot-engine/"
 "godot/af/>\n"
 "Language: af\n"
@@ -19,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4-dev\n"
+"X-Generator: Weblate 4.6-dev\n"
 
 #: core/math/expression.cpp modules/gdscript/gdscript_functions.cpp
 #: modules/visual_script/visual_script_builtin_funcs.cpp
@@ -216,14 +217,12 @@ msgid "Animation Playback Track"
 msgstr ""
 
 #: editor/animation_track_editor.cpp
-#, fuzzy
 msgid "Animation length (frames)"
-msgstr "Animasie lengte (in sekondes)."
+msgstr "Animasie lengte (in rame)."
 
 #: editor/animation_track_editor.cpp
-#, fuzzy
 msgid "Animation length (seconds)"
-msgstr "Animasie lengte (in sekondes)."
+msgstr "Animasie lengte (in sekondes)"
 
 #: editor/animation_track_editor.cpp
 #, fuzzy
@@ -1913,8 +1912,8 @@ msgid "Open a File or Directory"
 msgstr "Open 'n Lêer of Gids"
 
 #: editor/editor_file_dialog.cpp editor/editor_node.cpp
-#: editor/editor_properties.cpp editor/inspector_dock.cpp
-#: editor/plugins/animation_player_editor_plugin.cpp
+#: editor/editor_properties.cpp editor/import_defaults_editor.cpp
+#: editor/inspector_dock.cpp editor/plugins/animation_player_editor_plugin.cpp
 #: editor/plugins/script_editor_plugin.cpp scene/gui/file_dialog.cpp
 msgid "Save"
 msgstr "Stoor"
@@ -3667,6 +3666,11 @@ msgid "Status: Import of file failed. Please fix file and reimport manually."
 msgstr ""
 
 #: editor/filesystem_dock.cpp
+msgid ""
+"Importing has been disabled for this file, so it can't be opened for editing."
+msgstr ""
+
+#: editor/filesystem_dock.cpp
 msgid "Cannot move/rename resources root."
 msgstr ""
 
@@ -4077,6 +4081,25 @@ msgstr ""
 
 #: editor/import/resource_importer_scene.cpp
 msgid "Saving..."
+msgstr ""
+
+#: editor/import_defaults_editor.cpp
+#, fuzzy
+msgid "Select Importer"
+msgstr "Skep Vouer"
+
+#: editor/import_defaults_editor.cpp
+#, fuzzy
+msgid "Importer:"
+msgstr "Ek sien..."
+
+#: editor/import_defaults_editor.cpp
+#, fuzzy
+msgid "Reset to Defaults"
+msgstr "Laai Verstek"
+
+#: editor/import_dock.cpp
+msgid "Keep File (No Import)"
 msgstr ""
 
 #: editor/import_dock.cpp
@@ -5186,7 +5209,6 @@ msgid "Sort:"
 msgstr ""
 
 #: editor/plugins/asset_library_editor_plugin.cpp
-#: editor/project_settings_editor.cpp
 msgid "Category:"
 msgstr ""
 
@@ -10397,6 +10419,11 @@ msgstr ""
 msgid "Plugins"
 msgstr ""
 
+#: editor/project_settings_editor.cpp
+#, fuzzy
+msgid "Import Defaults"
+msgstr "Laai Verstek"
+
 #: editor/property_editor.cpp
 msgid "Preset..."
 msgstr ""
@@ -12425,6 +12452,14 @@ msgstr ""
 msgid "An empty CollisionPolygon2D has no effect on collision."
 msgstr ""
 
+#: scene/2d/collision_polygon_2d.cpp
+msgid "Invalid polygon. At least 3 points are needed in 'Solids' build mode."
+msgstr ""
+
+#: scene/2d/collision_polygon_2d.cpp
+msgid "Invalid polygon. At least 2 points are needed in 'Segments' build mode."
+msgstr ""
+
 #: scene/2d/collision_shape_2d.cpp
 msgid ""
 "CollisionShape2D only serves to provide a collision shape to a "
@@ -12678,11 +12713,6 @@ msgstr ""
 msgid ""
 "GIProbes are not supported by the GLES2 video driver.\n"
 "Use a BakedLightmap instead."
-msgstr ""
-
-#: scene/3d/interpolated_camera.cpp
-msgid ""
-"InterpolatedCamera has been deprecated and will be removed in Godot 4.0."
 msgstr ""
 
 #: scene/3d/light.cpp

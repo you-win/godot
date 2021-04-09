@@ -899,6 +899,10 @@ RID RasterizerSceneGLES2::light_instance_create(RID p_light) {
 
 	light_instance->light_index = 0xFFFF;
 
+	// an ever increasing counter for each light added,
+	// used for sorting lights for a consistent render
+	light_instance->light_counter = _light_counter++;
+
 	if (!light_instance->light_ptr) {
 		memdelete(light_instance);
 		ERR_FAIL_V_MSG(RID(), "Condition ' !light_instance->light_ptr ' is true.");
@@ -2313,8 +2317,8 @@ void RasterizerSceneGLES2::_render_render_list(RenderList::Element **p_elements,
 
 			if (!unshaded && e->light_index < RenderList::MAX_LIGHTS) {
 				light = render_light_instances[e->light_index];
-				if (e->instance->baked_light && light->light_ptr->bake_mode == VS::LIGHT_BAKE_ALL) {
-					light = NULL; // Don't use this light, it is already included in the lightmap
+				if ((e->instance->baked_light && light->light_ptr->bake_mode == VS::LIGHT_BAKE_ALL) || (e->instance->layer_mask & light->light_ptr->cull_mask) == 0) {
+					light = NULL; // Don't use this light, it is culled or already included in the lightmap
 				}
 			}
 
@@ -2594,7 +2598,6 @@ void RasterizerSceneGLES2::_render_render_list(RenderList::Element **p_elements,
 
 		if (use_lightmap_capture) { //this is per instance, must be set always if present
 			glUniform4fv(state.scene_shader.get_uniform_location(SceneShaderGLES2::LIGHTMAP_CAPTURES), 12, (const GLfloat *)e->instance->lightmap_capture_data.ptr());
-			state.scene_shader.set_uniform(SceneShaderGLES2::LIGHTMAP_CAPTURE_SKY, false);
 		}
 
 		_render_geometry(e);
@@ -3285,6 +3288,30 @@ void RasterizerSceneGLES2::render_scene(const Transform &p_cam_transform, const 
 			index++;
 		}
 
+		// for fog transmission, we want some kind of consistent ordering of lights
+		// add any more conditions here in which we need consistent light ordering
+		// (perhaps we always should have it, but don't know yet)
+		if (env && env->fog_transmit_enabled) {
+
+			struct _LightSort {
+
+				bool operator()(LightInstance *A, LightInstance *B) const {
+					return A->light_counter > B->light_counter;
+				}
+			};
+
+			int num_lights_to_sort = render_light_instance_count - render_directional_lights;
+
+			if (num_lights_to_sort) {
+				SortArray<LightInstance *, _LightSort> sorter;
+				sorter.sort(&render_light_instances[render_directional_lights], num_lights_to_sort);
+				// rejig indices
+				for (int i = render_directional_lights; i < render_light_instance_count; i++) {
+					render_light_instances[i]->light_index = i;
+				}
+			}
+		}
+
 	} else {
 		render_light_instances = NULL;
 		render_directional_lights = 0;
@@ -3701,7 +3728,7 @@ void RasterizerSceneGLES2::render_shadow(RID p_light, RID p_shadow_atlas, int p_
 
 				// find an appropriate cubemap to render to
 				for (int i = shadow_cubemaps.size() - 1; i >= 0; i--) {
-					if (shadow_cubemaps[i].size > shadow_size * 2) {
+					if (shadow_cubemaps[i].size > shadow_size) {
 						break;
 					}
 
@@ -3979,7 +4006,7 @@ void RasterizerSceneGLES2::initialize() {
 
 	// cubemaps for shadows
 	if (storage->config.support_shadow_cubemaps) { //not going to be used
-		int max_shadow_cubemap_sampler_size = 512;
+		int max_shadow_cubemap_sampler_size = CLAMP(int(next_power_of_2(GLOBAL_GET("rendering/quality/shadow_atlas/size")) >> 1), 256, storage->config.max_cubemap_texture_size);
 
 		int cube_size = max_shadow_cubemap_sampler_size;
 
@@ -4086,4 +4113,5 @@ void RasterizerSceneGLES2::finalize() {
 }
 
 RasterizerSceneGLES2::RasterizerSceneGLES2() {
+	_light_counter = 0;
 }

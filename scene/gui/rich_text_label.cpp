@@ -822,7 +822,8 @@ int RichTextLabel::_process_line(ItemFrame *p_frame, const Vector2 &p_ofs, int &
 					row_height = MAX(yofs, row_height);
 					offset.x += table->columns[column].width + hseparation;
 
-					if (column == table->columns.size() - 1) {
+					// Add row height after last column of the row or last cell of the table.
+					if (column == table->columns.size() - 1 || E->next() == NULL) {
 
 						offset.y += row_height + vseparation;
 						offset.x = hseparation;
@@ -2705,7 +2706,9 @@ void RichTextLabel::set_effects(const Vector<Variant> &effects) {
 		custom_effects.push_back(effect);
 	}
 
-	parse_bbcode(bbcode);
+	if ((bbcode != "") && use_bbcode) {
+		parse_bbcode(bbcode);
+	}
 }
 
 Vector<Variant> RichTextLabel::get_effects() {
@@ -2722,7 +2725,9 @@ void RichTextLabel::install_effect(const Variant effect) {
 
 	if (rteffect.is_valid()) {
 		custom_effects.push_back(effect);
-		parse_bbcode(bbcode);
+		if ((bbcode != "") && use_bbcode) {
+			parse_bbcode(bbcode);
+		}
 	}
 }
 
