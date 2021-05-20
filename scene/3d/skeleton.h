@@ -105,6 +105,19 @@ private:
 
 		PhysicalBone *physical_bone;
 		PhysicalBone *cache_parent_physical_bone;
+
+		Bone() {
+			parent = -1;
+			enabled = true;
+			disable_rest = false;
+			custom_pose_enable = false;
+			global_pose_override_amount = 0;
+			global_pose_override_reset = false;
+#ifndef _3D_DISABLED
+			physical_bone = nullptr;
+			cache_parent_physical_bone = nullptr;
+#endif // _3D_DISABLED
+		}
 	};
 
 	Set<SkinReference *> skin_bindings;
@@ -150,6 +163,7 @@ public:
 	void add_bone(const String &p_name);
 	int find_bone(const String &p_name) const;
 	String get_bone_name(int p_bone) const;
+	void set_bone_name(int p_bone, const String &p_name);
 
 	bool is_bone_parent_of(int p_bone_id, int p_parent_bone_id) const;
 
@@ -168,7 +182,7 @@ public:
 	void set_bone_rest(int p_bone, const Transform &p_rest);
 	Transform get_bone_rest(int p_bone) const;
 	Transform get_bone_global_pose(int p_bone, bool force_update = false) const;
-	Transform get_bone_global_pose_without_override(int p_bone, bool force_update = false) const;
+	Transform get_bone_global_pose_no_override(int p_bone, bool force_update = false) const;
 	Transform get_bone_global_rest(int p_bone) const;
 
 	void clear_bones_global_pose_override();

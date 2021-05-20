@@ -84,7 +84,6 @@
 #endif
 
 static void get_key_modifier_state(unsigned int p_osx_state, Ref<InputEventWithModifiers> state) {
-
 	state->set_shift((p_osx_state & NSEventModifierFlagShift));
 	state->set_control((p_osx_state & NSEventModifierFlagControl));
 	state->set_alt((p_osx_state & NSEventModifierFlagOption));
@@ -92,7 +91,6 @@ static void get_key_modifier_state(unsigned int p_osx_state, Ref<InputEventWithM
 }
 
 static void push_to_key_event_buffer(const OS_OSX::KeyEvent &p_event) {
-
 	Vector<OS_OSX::KeyEvent> &buffer = OS_OSX::singleton->key_event_buffer;
 	if (OS_OSX::singleton->key_event_pos >= buffer.size()) {
 		buffer.resize(1 + OS_OSX::singleton->key_event_pos);
@@ -107,7 +105,6 @@ static bool mouse_down_control = false;
 static bool ignore_momentum_scroll = false;
 
 static Vector2 get_mouse_pos(NSPoint locationInWindow) {
-
 	const NSRect contentRect = [OS_OSX::singleton->window_view frame];
 	const NSPoint p = locationInWindow;
 	const float s = OS_OSX::singleton->get_screen_max_scale();
@@ -136,18 +133,17 @@ static NSCursor *cursorFromSelector(SEL selector, SEL fallback = nil) {
 @implementation GodotApplication
 
 - (void)sendEvent:(NSEvent *)event {
-
 	// special case handling of command-period, which is traditionally a special
 	// shortcut in macOS and doesn't arrive at our regular keyDown handler.
 	if ([event type] == NSEventTypeKeyDown) {
 		if (([event modifierFlags] & NSEventModifierFlagCommand) && [event keyCode] == 0x2f) {
-
 			Ref<InputEventKey> k;
 			k.instance();
 
 			get_key_modifier_state([event modifierFlags], k);
 			k->set_pressed(true);
 			k->set_scancode(KEY_PERIOD);
+			k->set_physical_scancode(KEY_PERIOD);
 			k->set_echo([event isARepeat]);
 
 			OS_OSX::singleton->push_input(k);
@@ -205,7 +201,6 @@ static NSCursor *cursorFromSelector(SEL selector, SEL fallback = nil) {
 }
 
 - (void)globalMenuCallback:(id)sender {
-
 	if (![sender representedObject])
 		return;
 
@@ -218,7 +213,6 @@ static NSCursor *cursorFromSelector(SEL selector, SEL fallback = nil) {
 }
 
 - (NSMenu *)applicationDockMenu:(NSApplication *)sender {
-
 	NSMenu *menu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
 
 	Vector<OS_OSX::GlobalMenuItem> &E = OS_OSX::singleton->global_menus["_dock"];
@@ -406,7 +400,6 @@ static NSCursor *cursorFromSelector(SEL selector, SEL fallback = nil) {
 }
 
 - (void)windowDidMove:(NSNotification *)notification {
-
 	if (OS_OSX::singleton->get_main_loop()) {
 		OS_OSX::singleton->input->release_pressed_events();
 	}
@@ -620,6 +613,7 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 		ke.echo = false;
 		ke.raw = false; // IME input event
 		ke.scancode = 0;
+		ke.physical_scancode = 0;
 		ke.unicode = codepoint;
 
 		push_to_key_event_buffer(ke);
@@ -636,7 +630,6 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 }
 
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender {
-
 	Vector<String> files;
 	NSPasteboard *pboard = [sender draggingPasteboard];
 
@@ -733,7 +726,6 @@ static void _mouseDownEvent(NSEvent *event, int index, int mask, bool pressed) {
 }
 
 - (void)mouseMoved:(NSEvent *)event {
-
 	NSPoint delta = NSMakePoint([event deltaX], [event deltaY]);
 	NSPoint mpos = [event locationInWindow];
 
@@ -823,7 +815,6 @@ static void _mouseDownEvent(NSEvent *event, int index, int mask, bool pressed) {
 }
 
 - (void)otherMouseDown:(NSEvent *)event {
-
 	if ((int)[event buttonNumber] == 2) {
 		_mouseDownEvent(event, BUTTON_MIDDLE, BUTTON_MASK_MIDDLE, true);
 
@@ -843,7 +834,6 @@ static void _mouseDownEvent(NSEvent *event, int index, int mask, bool pressed) {
 }
 
 - (void)otherMouseUp:(NSEvent *)event {
-
 	if ((int)[event buttonNumber] == 2) {
 		_mouseDownEvent(event, BUTTON_MIDDLE, BUTTON_MASK_MIDDLE, false);
 
@@ -913,7 +903,6 @@ static void _mouseDownEvent(NSEvent *event, int index, int mask, bool pressed) {
 }
 
 static bool isNumpadKey(unsigned int key) {
-
 	static const unsigned int table[] = {
 		0x41, /* kVK_ANSI_KeypadDecimal */
 		0x43, /* kVK_ANSI_KeypadMultiply */
@@ -946,7 +935,6 @@ static bool isNumpadKey(unsigned int key) {
 // Translates a OS X keycode to a Godot keycode
 //
 static int translateKey(unsigned int key) {
-
 	// Keyboard symbol translation table
 	static const unsigned int table[128] = {
 		/* 00 */ KEY_A,
@@ -1149,7 +1137,6 @@ static const _KeyCodeMap _keycodes[55] = {
 };
 
 static int remapKey(unsigned int key, unsigned int state) {
-
 	if (isNumpadKey(key))
 		return translateKey(key);
 
@@ -1191,7 +1178,6 @@ static int remapKey(unsigned int key, unsigned int state) {
 }
 
 - (void)keyDown:(NSEvent *)event {
-
 	ignore_momentum_scroll = true;
 
 	// Ignore all input if IME input is in progress
@@ -1208,6 +1194,7 @@ static int remapKey(unsigned int key, unsigned int state) {
 				ke.pressed = true;
 				ke.echo = [event isARepeat];
 				ke.scancode = remapKey([event keyCode], [event modifierFlags]);
+				ke.physical_scancode = translateKey([event keyCode]);
 				ke.raw = true;
 				ke.unicode = [characters characterAtIndex:i];
 
@@ -1220,6 +1207,7 @@ static int remapKey(unsigned int key, unsigned int state) {
 			ke.pressed = true;
 			ke.echo = [event isARepeat];
 			ke.scancode = remapKey([event keyCode], [event modifierFlags]);
+			ke.physical_scancode = translateKey([event keyCode]);
 			ke.raw = false;
 			ke.unicode = 0;
 
@@ -1233,7 +1221,6 @@ static int remapKey(unsigned int key, unsigned int state) {
 }
 
 - (void)flagsChanged:(NSEvent *)event {
-
 	ignore_momentum_scroll = true;
 
 	// Ignore all input if IME input is in progress
@@ -1280,6 +1267,7 @@ static int remapKey(unsigned int key, unsigned int state) {
 
 		ke.osx_state = mod;
 		ke.scancode = remapKey(key, mod);
+		ke.physical_scancode = translateKey(key);
 		ke.unicode = 0;
 
 		push_to_key_event_buffer(ke);
@@ -1287,7 +1275,6 @@ static int remapKey(unsigned int key, unsigned int state) {
 }
 
 - (void)keyUp:(NSEvent *)event {
-
 	// Ignore all input if IME input is in progress
 	if (!imeInputEventInProgress) {
 		NSString *characters = [event characters];
@@ -1302,6 +1289,7 @@ static int remapKey(unsigned int key, unsigned int state) {
 				ke.pressed = false;
 				ke.echo = [event isARepeat];
 				ke.scancode = remapKey([event keyCode], [event modifierFlags]);
+				ke.physical_scancode = translateKey([event keyCode]);
 				ke.raw = true;
 				ke.unicode = [characters characterAtIndex:i];
 
@@ -1314,6 +1302,7 @@ static int remapKey(unsigned int key, unsigned int state) {
 			ke.pressed = false;
 			ke.echo = [event isARepeat];
 			ke.scancode = remapKey([event keyCode], [event modifierFlags]);
+			ke.physical_scancode = translateKey([event keyCode]);
 			ke.raw = true;
 			ke.unicode = 0;
 
@@ -1323,7 +1312,6 @@ static int remapKey(unsigned int key, unsigned int state) {
 }
 
 inline void sendScrollEvent(int button, double factor, int modifierFlags) {
-
 	unsigned int mask = 1 << (button - 1);
 	Vector2 mouse_pos = Vector2(mouse_x, mouse_y);
 
@@ -1352,7 +1340,6 @@ inline void sendScrollEvent(int button, double factor, int modifierFlags) {
 }
 
 inline void sendPanEvent(double dx, double dy, int modifierFlags) {
-
 	Ref<InputEventPanGesture> pg;
 	pg.instance();
 
@@ -1411,7 +1398,6 @@ inline void sendPanEvent(double dx, double dy, int modifierFlags) {
 @end
 
 void OS_OSX::_update_global_menu() {
-
 	NSMenu *main_menu = [NSApp mainMenu];
 
 	for (int i = [main_menu numberOfItems] - 1; i > 0; i--) {
@@ -1434,7 +1420,6 @@ void OS_OSX::_update_global_menu() {
 }
 
 void OS_OSX::global_menu_add_item(const String &p_menu, const String &p_label, const Variant &p_signal, const Variant &p_meta) {
-
 	if (!global_menus.has(p_menu) && (p_menu != "_dock")) {
 		global_menus_order.push_back(p_menu);
 	}
@@ -1443,7 +1428,6 @@ void OS_OSX::global_menu_add_item(const String &p_menu, const String &p_label, c
 }
 
 void OS_OSX::global_menu_add_separator(const String &p_menu) {
-
 	if (!global_menus.has(p_menu) && (p_menu != "_dock")) {
 		global_menus_order.push_back(p_menu);
 	}
@@ -1452,7 +1436,6 @@ void OS_OSX::global_menu_add_separator(const String &p_menu) {
 }
 
 void OS_OSX::global_menu_remove_item(const String &p_menu, int p_idx) {
-
 	ERR_FAIL_INDEX(p_idx, global_menus[p_menu].size());
 
 	global_menus[p_menu].remove(p_idx);
@@ -1460,7 +1443,6 @@ void OS_OSX::global_menu_remove_item(const String &p_menu, int p_idx) {
 }
 
 void OS_OSX::global_menu_clear(const String &p_menu) {
-
 	if (global_menus.has(p_menu)) {
 		global_menus[p_menu].clear();
 		if (p_menu != "_dock") {
@@ -1472,17 +1454,14 @@ void OS_OSX::global_menu_clear(const String &p_menu) {
 }
 
 Point2 OS_OSX::get_ime_selection() const {
-
 	return im_selection;
 }
 
 String OS_OSX::get_ime_text() const {
-
 	return im_text;
 }
 
 String OS_OSX::get_unique_id() const {
-
 	static String serial_number;
 
 	if (serial_number.empty()) {
@@ -1506,19 +1485,16 @@ String OS_OSX::get_unique_id() const {
 }
 
 void OS_OSX::set_ime_active(const bool p_active) {
-
 	im_active = p_active;
 	if (!im_active)
 		[window_view cancelComposition];
 }
 
 void OS_OSX::set_ime_position(const Point2 &p_pos) {
-
 	im_position = p_pos;
 }
 
 void OS_OSX::initialize_core() {
-
 	crash_handler.initialize();
 
 	OS_Unix::initialize_core();
@@ -1555,7 +1531,6 @@ int OS_OSX::get_current_video_driver() const {
 }
 
 Error OS_OSX::initialize(const VideoMode &p_desired, int p_video_driver, int p_audio_driver) {
-
 	/*** OSX INITIALIZATION ***/
 	/*** OSX INITIALIZATION ***/
 	/*** OSX INITIALIZATION ***/
@@ -1796,7 +1771,6 @@ Error OS_OSX::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 }
 
 void OS_OSX::finalize() {
-
 #ifdef COREMIDI_ENABLED
 	midi_driver.close();
 #endif
@@ -1816,13 +1790,11 @@ void OS_OSX::finalize() {
 }
 
 void OS_OSX::set_main_loop(MainLoop *p_main_loop) {
-
 	main_loop = p_main_loop;
 	input->set_main_loop(p_main_loop);
 }
 
 void OS_OSX::delete_main_loop() {
-
 	if (!main_loop)
 		return;
 	memdelete(main_loop);
@@ -1830,7 +1802,6 @@ void OS_OSX::delete_main_loop() {
 }
 
 String OS_OSX::get_name() const {
-
 	return "OSX";
 }
 
@@ -1924,7 +1895,6 @@ void OS_OSX::alert(const String &p_alert, const String &p_title) {
 }
 
 Error OS_OSX::open_dynamic_library(const String p_path, void *&p_library_handle, bool p_also_set_library_path) {
-
 	String path = p_path;
 
 	if (!FileAccess::exists(path)) {
@@ -1943,7 +1913,6 @@ Error OS_OSX::open_dynamic_library(const String p_path, void *&p_library_handle,
 }
 
 void OS_OSX::set_cursor_shape(CursorShape p_shape) {
-
 	if (cursor_shape == p_shape)
 		return;
 
@@ -1956,23 +1925,57 @@ void OS_OSX::set_cursor_shape(CursorShape p_shape) {
 		[cursors[p_shape] set];
 	} else {
 		switch (p_shape) {
-			case CURSOR_ARROW: [[NSCursor arrowCursor] set]; break;
-			case CURSOR_IBEAM: [[NSCursor IBeamCursor] set]; break;
-			case CURSOR_POINTING_HAND: [[NSCursor pointingHandCursor] set]; break;
-			case CURSOR_CROSS: [[NSCursor crosshairCursor] set]; break;
-			case CURSOR_WAIT: [[NSCursor arrowCursor] set]; break;
-			case CURSOR_BUSY: [[NSCursor arrowCursor] set]; break;
-			case CURSOR_DRAG: [[NSCursor closedHandCursor] set]; break;
-			case CURSOR_CAN_DROP: [[NSCursor openHandCursor] set]; break;
-			case CURSOR_FORBIDDEN: [[NSCursor operationNotAllowedCursor] set]; break;
-			case CURSOR_VSIZE: [cursorFromSelector(@selector(_windowResizeNorthSouthCursor), @selector(resizeUpDownCursor)) set]; break;
-			case CURSOR_HSIZE: [cursorFromSelector(@selector(_windowResizeEastWestCursor), @selector(resizeLeftRightCursor)) set]; break;
-			case CURSOR_BDIAGSIZE: [cursorFromSelector(@selector(_windowResizeNorthEastSouthWestCursor)) set]; break;
-			case CURSOR_FDIAGSIZE: [cursorFromSelector(@selector(_windowResizeNorthWestSouthEastCursor)) set]; break;
-			case CURSOR_MOVE: [[NSCursor arrowCursor] set]; break;
-			case CURSOR_VSPLIT: [[NSCursor resizeUpDownCursor] set]; break;
-			case CURSOR_HSPLIT: [[NSCursor resizeLeftRightCursor] set]; break;
-			case CURSOR_HELP: [cursorFromSelector(@selector(_helpCursor)) set]; break;
+			case CURSOR_ARROW:
+				[[NSCursor arrowCursor] set];
+				break;
+			case CURSOR_IBEAM:
+				[[NSCursor IBeamCursor] set];
+				break;
+			case CURSOR_POINTING_HAND:
+				[[NSCursor pointingHandCursor] set];
+				break;
+			case CURSOR_CROSS:
+				[[NSCursor crosshairCursor] set];
+				break;
+			case CURSOR_WAIT:
+				[[NSCursor arrowCursor] set];
+				break;
+			case CURSOR_BUSY:
+				[[NSCursor arrowCursor] set];
+				break;
+			case CURSOR_DRAG:
+				[[NSCursor closedHandCursor] set];
+				break;
+			case CURSOR_CAN_DROP:
+				[[NSCursor openHandCursor] set];
+				break;
+			case CURSOR_FORBIDDEN:
+				[[NSCursor operationNotAllowedCursor] set];
+				break;
+			case CURSOR_VSIZE:
+				[cursorFromSelector(@selector(_windowResizeNorthSouthCursor), @selector(resizeUpDownCursor)) set];
+				break;
+			case CURSOR_HSIZE:
+				[cursorFromSelector(@selector(_windowResizeEastWestCursor), @selector(resizeLeftRightCursor)) set];
+				break;
+			case CURSOR_BDIAGSIZE:
+				[cursorFromSelector(@selector(_windowResizeNorthEastSouthWestCursor)) set];
+				break;
+			case CURSOR_FDIAGSIZE:
+				[cursorFromSelector(@selector(_windowResizeNorthWestSouthEastCursor)) set];
+				break;
+			case CURSOR_MOVE:
+				[[NSCursor arrowCursor] set];
+				break;
+			case CURSOR_VSPLIT:
+				[[NSCursor resizeUpDownCursor] set];
+				break;
+			case CURSOR_HSPLIT:
+				[[NSCursor resizeLeftRightCursor] set];
+				break;
+			case CURSOR_HELP:
+				[cursorFromSelector(@selector(_helpCursor)) set];
+				break;
 			default: {
 			};
 		}
@@ -1982,15 +1985,12 @@ void OS_OSX::set_cursor_shape(CursorShape p_shape) {
 }
 
 OS::CursorShape OS_OSX::get_cursor_shape() const {
-
 	return cursor_shape;
 }
 
 void OS_OSX::set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, const Vector2 &p_hotspot) {
-
 	if (p_cursor.is_valid()) {
-
-		Map<CursorShape, Vector<Variant> >::Element *cursor_c = cursors_cache.find(p_shape);
+		Map<CursorShape, Vector<Variant>>::Element *cursor_c = cursors_cache.find(p_shape);
 
 		if (cursor_c) {
 			if (cursor_c->get()[0] == p_cursor && cursor_c->get()[1] == p_hotspot) {
@@ -2120,12 +2120,10 @@ void OS_OSX::set_mouse_grab(bool p_grab) {
 }
 
 bool OS_OSX::is_mouse_grab_enabled() const {
-
 	return mouse_grab;
 }
 
 void OS_OSX::warp_mouse_position(const Point2 &p_to) {
-
 	//copied from windows impl with osx native calls
 	if (mouse_mode == MOUSE_MODE_CAPTURED) {
 		mouse_x = p_to.x;
@@ -2153,13 +2151,11 @@ void OS_OSX::warp_mouse_position(const Point2 &p_to) {
 }
 
 void OS_OSX::update_real_mouse_position() {
-
 	get_mouse_pos([window_object mouseLocationOutsideOfEventStream]);
 	input->set_mouse_position(Point2(mouse_x, mouse_y));
 }
 
 Point2 OS_OSX::get_mouse_position() const {
-
 	return Vector2(mouse_x, mouse_y);
 }
 
@@ -2181,12 +2177,11 @@ void OS_OSX::set_window_mouse_passthrough(const PoolVector2Array &p_region) {
 }
 
 void OS_OSX::set_native_icon(const String &p_filename) {
-
 	FileAccess *f = FileAccess::open(p_filename, FileAccess::READ);
 	ERR_FAIL_COND(!f);
 
 	Vector<uint8_t> data;
-	uint32_t len = f->get_len();
+	uint64_t len = f->get_len();
 	data.resize(len);
 	f->get_buffer((uint8_t *)&data.write[0], len);
 	memdelete(f);
@@ -2201,7 +2196,6 @@ void OS_OSX::set_native_icon(const String &p_filename) {
 }
 
 void OS_OSX::set_icon(const Ref<Image> &p_icon) {
-
 	Ref<Image> img = p_icon;
 	img = img->duplicate();
 	img->convert(Image::FORMAT_RGBA8);
@@ -2240,12 +2234,10 @@ void OS_OSX::set_icon(const Ref<Image> &p_icon) {
 }
 
 MainLoop *OS_OSX::get_main_loop() const {
-
 	return main_loop;
 }
 
 String OS_OSX::get_config_path() const {
-
 	if (has_environment("XDG_CONFIG_HOME")) {
 		return get_environment("XDG_CONFIG_HOME");
 	} else if (has_environment("HOME")) {
@@ -2256,7 +2248,6 @@ String OS_OSX::get_config_path() const {
 }
 
 String OS_OSX::get_data_path() const {
-
 	if (has_environment("XDG_DATA_HOME")) {
 		return get_environment("XDG_DATA_HOME");
 	} else {
@@ -2265,7 +2256,6 @@ String OS_OSX::get_data_path() const {
 }
 
 String OS_OSX::get_cache_path() const {
-
 	if (has_environment("XDG_CACHE_HOME")) {
 		return get_environment("XDG_CACHE_HOME");
 	} else if (has_environment("HOME")) {
@@ -2276,7 +2266,6 @@ String OS_OSX::get_cache_path() const {
 }
 
 String OS_OSX::get_bundle_resource_dir() const {
-
 	NSBundle *main = [NSBundle mainBundle];
 	NSString *resourcePath = [main resourcePath];
 
@@ -2290,12 +2279,10 @@ String OS_OSX::get_bundle_resource_dir() const {
 
 // Get properly capitalized engine name for system paths
 String OS_OSX::get_godot_dir_name() const {
-
 	return String(VERSION_SHORT_NAME).capitalize();
 }
 
 String OS_OSX::get_system_dir(SystemDir p_dir) const {
-
 	NSSearchPathDirectory id;
 	bool found = true;
 
@@ -2325,10 +2312,8 @@ String OS_OSX::get_system_dir(SystemDir p_dir) const {
 
 	String ret;
 	if (found) {
-
 		NSArray *paths = NSSearchPathForDirectoriesInDomains(id, NSUserDomainMask, YES);
 		if (paths && [paths count] >= 1) {
-
 			char *utfs = strdup([[paths firstObject] UTF8String]);
 			ret.parse_utf8(utfs);
 			free(utfs);
@@ -2339,12 +2324,10 @@ String OS_OSX::get_system_dir(SystemDir p_dir) const {
 }
 
 bool OS_OSX::can_draw() const {
-
 	return true;
 }
 
 void OS_OSX::set_clipboard(const String &p_text) {
-
 	NSString *copiedString = [NSString stringWithUTF8String:p_text.utf8().get_data()];
 	NSArray *copiedStringArray = [NSArray arrayWithObject:copiedString];
 
@@ -2354,7 +2337,6 @@ void OS_OSX::set_clipboard(const String &p_text) {
 }
 
 String OS_OSX::get_clipboard() const {
-
 	NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
 	NSArray *classArray = [NSArray arrayWithObject:[NSString class]];
 	NSDictionary *options = [NSDictionary dictionary];
@@ -2377,12 +2359,10 @@ String OS_OSX::get_clipboard() const {
 }
 
 void OS_OSX::release_rendering_thread() {
-
 	[NSOpenGLContext clearCurrentContext];
 }
 
 void OS_OSX::make_rendering_thread() {
-
 	[context makeCurrentContext];
 }
 
@@ -2407,7 +2387,6 @@ void OS_OSX::swap_buffers() {
 }
 
 void OS_OSX::wm_minimized(bool p_minimized) {
-
 	minimized = p_minimized;
 };
 
@@ -2415,7 +2394,6 @@ void OS_OSX::set_video_mode(const VideoMode &p_video_mode, int p_screen) {
 }
 
 OS::VideoMode OS_OSX::get_video_mode(int p_screen) const {
-
 	VideoMode vm;
 	vm.width = window_size.width;
 	vm.height = window_size.height;
@@ -2600,7 +2578,6 @@ float OS_OSX::get_screen_max_scale() const {
 }
 
 Point2 OS_OSX::get_native_window_position() const {
-
 	NSRect nsrect = [window_object frame];
 	Point2 pos;
 	float display_scale = get_screen_max_scale();
@@ -2651,12 +2628,10 @@ void OS_OSX::set_window_position(const Point2 &p_position) {
 };
 
 Size2 OS_OSX::get_window_size() const {
-
 	return window_size;
 };
 
 Size2 OS_OSX::get_real_window_size() const {
-
 	NSRect frame = [window_object frame];
 	return Size2(frame.size.width, frame.size.height) * get_screen_max_scale();
 }
@@ -2670,7 +2645,6 @@ Size2 OS_OSX::get_min_window_size() const {
 }
 
 void OS_OSX::set_min_window_size(const Size2 p_size) {
-
 	if (is_no_window_mode_enabled()) {
 		return;
 	}
@@ -2690,7 +2664,6 @@ void OS_OSX::set_min_window_size(const Size2 p_size) {
 }
 
 void OS_OSX::set_max_window_size(const Size2 p_size) {
-
 	if (is_no_window_mode_enabled()) {
 		return;
 	}
@@ -2710,7 +2683,6 @@ void OS_OSX::set_max_window_size(const Size2 p_size) {
 }
 
 void OS_OSX::set_window_size(const Size2 p_size) {
-
 	if (is_no_window_mode_enabled()) {
 		return;
 	}
@@ -2762,7 +2734,6 @@ void OS_OSX::set_window_fullscreen(bool p_enabled) {
 };
 
 bool OS_OSX::is_window_fullscreen() const {
-
 	return zoomed;
 };
 
@@ -2780,7 +2751,6 @@ void OS_OSX::set_window_resizable(bool p_enabled) {
 };
 
 bool OS_OSX::is_window_resizable() const {
-
 	return [window_object styleMask] & NSWindowStyleMaskResizable;
 };
 
@@ -2796,7 +2766,6 @@ void OS_OSX::set_window_minimized(bool p_enabled) {
 };
 
 bool OS_OSX::is_window_minimized() const {
-
 	if ([window_object respondsToSelector:@selector(isMiniaturized)])
 		return [window_object isMiniaturized];
 
@@ -2819,7 +2788,6 @@ void OS_OSX::set_window_maximized(bool p_enabled) {
 };
 
 bool OS_OSX::is_window_maximized() const {
-
 	// don't know
 	return maximized;
 };
@@ -2866,14 +2834,14 @@ void OS_OSX::request_attention() {
 }
 
 bool OS_OSX::get_window_per_pixel_transparency_enabled() const {
-
-	if (!is_layered_allowed()) return false;
+	if (!is_layered_allowed())
+		return false;
 	return layered_window;
 }
 
 void OS_OSX::set_window_per_pixel_transparency_enabled(bool p_enabled) {
-
-	if (!is_layered_allowed()) return;
+	if (!is_layered_allowed())
+		return;
 	if (layered_window != p_enabled) {
 		if (p_enabled) {
 			GLint opacity = 0;
@@ -2928,12 +2896,10 @@ void OS_OSX::set_borderless_window(bool p_borderless) {
 }
 
 bool OS_OSX::get_borderless_window() {
-
 	return [window_object styleMask] == NSWindowStyleMaskBorderless;
 }
 
 String OS_OSX::get_executable_path() const {
-
 	int ret;
 	pid_t pid;
 	char pathbuf[PROC_PIDPATHINFO_MAXSIZE];
@@ -2953,7 +2919,6 @@ String OS_OSX::get_executable_path() const {
 // Returns string representation of keys, if they are printable.
 //
 static NSString *createStringForKeys(const CGKeyCode *keyCode, int length) {
-
 	TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
 	if (!currentKeyboard)
 		return nil;
@@ -2968,7 +2933,6 @@ static NSString *createStringForKeys(const CGKeyCode *keyCode, int length) {
 	CFMutableStringRef output = CFStringCreateMutable(NULL, 0);
 
 	for (int i = 0; i < length; ++i) {
-
 		UInt32 keysDown = 0;
 		UniChar chars[4];
 		UniCharCount realLength;
@@ -3066,7 +3030,6 @@ void _update_keyboard_layouts() {
 }
 
 OS::LatinKeyboardVariant OS_OSX::get_latin_keyboard_variant() const {
-
 	if (keyboard_layout_dirty) {
 		_update_keyboard_layouts();
 	}
@@ -3140,7 +3103,6 @@ String OS_OSX::keyboard_get_layout_name(int p_index) const {
 }
 
 void OS_OSX::process_events() {
-
 	while (true) {
 		NSEvent *event = [NSApp
 				nextEventMatchingMask:NSEventMaskAny
@@ -3179,10 +3141,8 @@ void OS_OSX::process_events() {
 }
 
 void OS_OSX::process_key_events() {
-
 	Ref<InputEventKey> k;
 	for (int i = 0; i < key_event_pos; i++) {
-
 		const KeyEvent &ke = key_event_buffer[i];
 
 		if (ke.raw) {
@@ -3193,6 +3153,7 @@ void OS_OSX::process_key_events() {
 			k->set_pressed(ke.pressed);
 			k->set_echo(ke.echo);
 			k->set_scancode(ke.scancode);
+			k->set_physical_scancode(ke.physical_scancode);
 			k->set_unicode(ke.unicode);
 
 			push_input(k);
@@ -3205,6 +3166,7 @@ void OS_OSX::process_key_events() {
 				k->set_pressed(ke.pressed);
 				k->set_echo(ke.echo);
 				k->set_scancode(0);
+				k->set_physical_scancode(0);
 				k->set_unicode(ke.unicode);
 
 				push_input(k);
@@ -3216,6 +3178,7 @@ void OS_OSX::process_key_events() {
 				k->set_pressed(ke.pressed);
 				k->set_echo(ke.echo);
 				k->set_scancode(ke.scancode);
+				k->set_physical_scancode(ke.physical_scancode);
 
 				if (i + 1 < key_event_pos && key_event_buffer[i + 1].scancode == 0) {
 					k->set_unicode(key_event_buffer[i + 1].unicode);
@@ -3230,19 +3193,16 @@ void OS_OSX::process_key_events() {
 }
 
 void OS_OSX::push_input(const Ref<InputEvent> &p_event) {
-
 	Ref<InputEvent> ev = p_event;
 	input->accumulate_input_event(ev);
 }
 
 void OS_OSX::force_process_input() {
-
 	process_events(); // get rid of pending events
 	joypad_osx->process_joypads();
 }
 
 void OS_OSX::run() {
-
 	force_quit = false;
 
 	if (!main_loop)
@@ -3263,9 +3223,7 @@ void OS_OSX::run() {
 	bool quit = false;
 
 	while (!force_quit && !quit) {
-
 		@try {
-
 			process_events(); // get rid of pending events
 			joypad_osx->process_joypads();
 
@@ -3281,7 +3239,6 @@ void OS_OSX::run() {
 }
 
 void OS_OSX::set_mouse_mode(MouseMode p_mode) {
-
 	if (p_mode == mouse_mode)
 		return;
 
@@ -3319,7 +3276,6 @@ void OS_OSX::set_mouse_mode(MouseMode p_mode) {
 }
 
 OS::MouseMode OS_OSX::get_mouse_mode() const {
-
 	return mouse_mode;
 }
 
@@ -3363,7 +3319,6 @@ void OS_OSX::_set_use_vsync(bool p_enable) {
 OS_OSX *OS_OSX::singleton = NULL;
 
 OS_OSX::OS_OSX() {
-
 	context = nullptr;
 
 	memset(cursors, 0, sizeof(cursors));

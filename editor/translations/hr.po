@@ -2456,8 +2456,9 @@ msgstr ""
 
 #: editor/editor_node.cpp
 msgid ""
-"Unable to load addon script from path: '%s' There seems to be an error in "
-"the code, please check the syntax."
+"Unable to load addon script from path: '%s'. This might be due to a code "
+"error in that script.\n"
+"Disabling the addon at '%s' to prevent further errors."
 msgstr ""
 
 #: editor/editor_node.cpp
@@ -2859,6 +2860,10 @@ msgstr "Zajednica"
 
 #: editor/editor_node.cpp
 msgid "About"
+msgstr ""
+
+#: editor/editor_node.cpp
+msgid "Support Godot Development"
 msgstr ""
 
 #: editor/editor_node.cpp
