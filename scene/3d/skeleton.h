@@ -5,8 +5,8 @@
 /*                           GODOT ENGINE                                */
 /*                      https://godotengine.org                          */
 /*************************************************************************/
-/* Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.                 */
-/* Copyright (c) 2014-2020 Godot Engine contributors (cf. AUTHORS.md).   */
+/* Copyright (c) 2007-2021 Juan Linietsky, Ariel Manzur.                 */
+/* Copyright (c) 2014-2021 Godot Engine contributors (cf. AUTHORS.md).   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -105,19 +105,6 @@ private:
 
 		PhysicalBone *physical_bone;
 		PhysicalBone *cache_parent_physical_bone;
-
-		Bone() {
-			parent = -1;
-			enabled = true;
-			disable_rest = false;
-			custom_pose_enable = false;
-			global_pose_override_amount = 0;
-			global_pose_override_reset = false;
-#ifndef _3D_DISABLED
-			physical_bone = nullptr;
-			cache_parent_physical_bone = nullptr;
-#endif // _3D_DISABLED
-		}
 	};
 
 	Set<SkinReference *> skin_bindings;
