@@ -499,7 +499,7 @@ public:
 		TransformMode orig_transform_mode;
 
 		// support for extra matrices
-		bool extra_matrix_sent; // whether sent on this item (in which case sofware transform can't be used untl end of item)
+		bool extra_matrix_sent; // whether sent on this item (in which case software transform can't be used untl end of item)
 		int transform_extra_command_number_p1; // plus one to allow fast checking against zero
 		Transform2D transform_combined; // final * extra
 		Transform2D skeleton_base_inverse_xform; // used in software skinning
@@ -1840,6 +1840,13 @@ PREAMBLE(bool)::_software_skin_poly(RasterizerCanvas::Item::CommandPolygon *p_po
 		// because we want the poly transform RELATIVE to the base skeleton.
 		Transform2D item_transform = skel_trans_inv * p_item->final_transform;
 
+<<<<<<< HEAD
+=======
+		// instead of using the p_item->xform we use the final transform,
+		// because we want the poly transform RELATIVE to the base skeleton.
+		Transform2D item_transform = skel_trans_inv * p_item->final_transform;
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 		Transform2D item_transform_inv = item_transform.affine_inverse();
 
 		for (int n = 0; n < num_verts; n++) {
@@ -2540,7 +2547,12 @@ PREAMBLE(void)::flush_render_batches(RasterizerCanvas::Item *p_first_item, Raste
 }
 
 PREAMBLE(void)::render_joined_item_commands(const BItemJoined &p_bij, RasterizerCanvas::Item *p_current_clip, bool &r_reclip, typename T_STORAGE::Material *p_material, bool p_lit, const RenderItemState &p_ris) {
+<<<<<<< HEAD
 	RasterizerCanvas::Item *item = nullptr;
+=======
+
+	RasterizerCanvas::Item *item = 0;
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	RasterizerCanvas::Item *first_item = bdata.item_refs[p_bij.first_item_ref].item;
 
 	// fill_state and bdata have once off setup per joined item, and a smaller reset on flush
@@ -2559,6 +2571,13 @@ PREAMBLE(void)::render_joined_item_commands(const BItemJoined &p_bij, Rasterizer
 		bdata.use_large_verts = true;
 		bdata.fvf = RasterizerStorageCommon::FVF_LARGE;
 	}
+
+	// make sure the jointed item flags state is up to date, as it is read indirectly in
+	// a couple of places from the state rather than from the joined item.
+	// we could alternatively make sure to only read directly from the joined item
+	// during the render, but it is probably more bug future proof to make sure both
+	// are up to date.
+	bdata.joined_item_batch_flags = p_bij.flags;
 
 	// in the special case of custom shaders that read from VERTEX (i.e. vertex position)
 	// we want to disable software transform of extra matrix
@@ -3063,6 +3082,10 @@ void C_PREAMBLE::_translate_batches_to_larger_FVF(uint32_t p_sequence_batch_type
 
 			// create the colored verts (only if not default)
 			if (source_batch.type != RasterizerStorageCommon::BT_DEFAULT) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 				int first_vert = source_batch.first_vert;
 				int num_verts = source_batch.get_num_verts();
 				int end_vert = first_vert + num_verts;

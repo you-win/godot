@@ -198,6 +198,10 @@ Vector3 Vector3::round() const {
 }
 
 Vector3 Vector3::linear_interpolate(const Vector3 &p_to, real_t p_weight) const {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	return Vector3(
 			x + (p_weight * (p_to.x - x)),
 			y + (p_weight * (p_to.y - y)),
@@ -210,10 +214,18 @@ Vector3 Vector3::slerp(const Vector3 &p_to, real_t p_weight) const {
 }
 
 real_t Vector3::distance_to(const Vector3 &p_to) const {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	return (p_to - *this).length();
 }
 
 real_t Vector3::distance_squared_to(const Vector3 &p_to) const {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	return (p_to - *this).length_squared();
 }
 
@@ -230,6 +242,10 @@ Vector3 Vector3::project(const Vector3 &p_to) const {
 }
 
 real_t Vector3::angle_to(const Vector3 &p_to) const {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	return Math::atan2(cross(p_to).length(), dot(p_to));
 }
 

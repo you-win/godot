@@ -863,8 +863,13 @@ Ref<NavigationPolygon> TileSet::tile_get_navigation_polygon(int p_id) const {
 	return tile_map[p_id].navigation_polygon;
 }
 
+<<<<<<< HEAD
 const Map<Vector2, Ref<OccluderPolygon2D>> &TileSet::autotile_get_light_oclusion_map(int p_id) const {
 	static Map<Vector2, Ref<OccluderPolygon2D>> dummy;
+=======
+const Map<Vector2, Ref<OccluderPolygon2D> > &TileSet::autotile_get_light_oclusion_map(int p_id) const {
+	static Map<Vector2, Ref<OccluderPolygon2D> > dummy;
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	ERR_FAIL_COND_V_MSG(!tile_map.has(p_id), dummy, vformat("The TileSet doesn't have a tile with ID '%d'.", p_id));
 	return tile_map[p_id].autotile_data.occluder_map;
 }
@@ -889,8 +894,13 @@ Ref<NavigationPolygon> TileSet::autotile_get_navigation_polygon(int p_id, const 
 	}
 }
 
+<<<<<<< HEAD
 const Map<Vector2, Ref<NavigationPolygon>> &TileSet::autotile_get_navigation_map(int p_id) const {
 	static Map<Vector2, Ref<NavigationPolygon>> dummy;
+=======
+const Map<Vector2, Ref<NavigationPolygon> > &TileSet::autotile_get_navigation_map(int p_id) const {
+	static Map<Vector2, Ref<NavigationPolygon> > dummy;
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	ERR_FAIL_COND_V_MSG(!tile_map.has(p_id), dummy, vformat("The TileSet doesn't have a tile with ID '%d'.", p_id));
 	return tile_map[p_id].autotile_data.navpoly_map;
 }

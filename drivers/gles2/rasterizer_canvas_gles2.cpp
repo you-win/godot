@@ -2155,9 +2155,14 @@ void RasterizerCanvasGLES2::render_joined_item(const BItemJoined &p_bij, RenderI
 
 	_set_uniforms();
 
+<<<<<<< HEAD
 	if (unshaded || (state.uniforms.final_modulate.a > 0.001 && (!r_ris.shader_cache || r_ris.shader_cache->canvas_item.light_mode != RasterizerStorageGLES2::Shader::CanvasItem::LIGHT_MODE_LIGHT_ONLY) && !ci->light_masked)) {
 		render_joined_item_commands(p_bij, nullptr, reclip, material_ptr, false, r_ris);
 	}
+=======
+	if (unshaded || (state.uniforms.final_modulate.a > 0.001 && (!r_ris.shader_cache || r_ris.shader_cache->canvas_item.light_mode != RasterizerStorageGLES2::Shader::CanvasItem::LIGHT_MODE_LIGHT_ONLY) && !ci->light_masked))
+		render_joined_item_commands(p_bij, NULL, reclip, material_ptr, false, r_ris);
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 	r_ris.rebind_shader = true; // hacked in for now.
 
@@ -2245,10 +2250,17 @@ void RasterizerCanvasGLES2::render_joined_item(const BItemJoined &p_bij, RenderI
 				// this can greatly reduce fill rate ..
 				// at the cost of glScissor commands, so is optional
 				if (!bdata.settings_scissor_lights || r_ris.current_clip) {
+<<<<<<< HEAD
 					render_joined_item_commands(p_bij, nullptr, reclip, material_ptr, true, r_ris);
 				} else {
 					bool scissor = _light_scissor_begin(p_bij.bounding_rect, light->xform_cache, light->rect_cache);
 					render_joined_item_commands(p_bij, nullptr, reclip, material_ptr, true, r_ris);
+=======
+					render_joined_item_commands(p_bij, NULL, reclip, material_ptr, true, r_ris);
+				} else {
+					bool scissor = _light_scissor_begin(p_bij.bounding_rect, light->xform_cache, light->rect_cache);
+					render_joined_item_commands(p_bij, NULL, reclip, material_ptr, true, r_ris);
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 					if (scissor) {
 						glDisable(GL_SCISSOR_TEST);
 					}

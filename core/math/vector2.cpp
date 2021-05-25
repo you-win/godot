@@ -139,6 +139,10 @@ Vector2 Vector2::clamped(real_t p_len) const {
 }
 
 Vector2 Vector2::cubic_interpolate(const Vector2 &p_b, const Vector2 &p_pre_a, const Vector2 &p_post_b, real_t p_weight) const {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	Vector2 p0 = p_pre_a;
 	Vector2 p1 = *this;
 	Vector2 p2 = p_b;

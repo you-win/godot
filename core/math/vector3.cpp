@@ -63,6 +63,10 @@ Vector3 Vector3::snapped(Vector3 p_val) const {
 }
 
 Vector3 Vector3::cubic_interpolaten(const Vector3 &p_b, const Vector3 &p_pre_a, const Vector3 &p_post_b, real_t p_weight) const {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	Vector3 p0 = p_pre_a;
 	Vector3 p1 = *this;
 	Vector3 p2 = p_b;
@@ -96,6 +100,10 @@ Vector3 Vector3::cubic_interpolaten(const Vector3 &p_b, const Vector3 &p_pre_a, 
 }
 
 Vector3 Vector3::cubic_interpolate(const Vector3 &p_b, const Vector3 &p_pre_a, const Vector3 &p_post_b, real_t p_weight) const {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	Vector3 p0 = p_pre_a;
 	Vector3 p1 = *this;
 	Vector3 p2 = p_b;

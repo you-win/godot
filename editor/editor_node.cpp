@@ -653,6 +653,11 @@ void EditorNode::_remove_plugin_from_enabled(const String &p_name) {
 	}
 	ps->set("editor_plugins/enabled", enabled_plugins);
 }
+<<<<<<< HEAD
+=======
+
+void EditorNode::_resources_changed(const PoolVector<String> &p_resources) {
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 void EditorNode::_resources_changed(const PoolVector<String> &p_resources) {
 	List<Ref<Resource>> changed;
@@ -3131,7 +3136,10 @@ void EditorNode::remove_editor_plugin(EditorPlugin *p_editor, bool p_config_chan
 	p_editor->clear();
 	if (p_config_changed) {
 		p_editor->disable_plugin();
+<<<<<<< HEAD
 	}
+=======
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	singleton->editor_plugins_over->remove_plugin(p_editor);
 	singleton->editor_plugins_force_over->remove_plugin(p_editor);
 	singleton->editor_plugins_force_input_forwarding->remove_plugin(p_editor);
@@ -6396,7 +6404,11 @@ EditorNode::EditorNode() {
 	p->add_icon_shortcut(gui_base->get_icon("Instance", "EditorIcons"), ED_SHORTCUT("editor/send_docs_feedback", TTR("Send Docs Feedback")), HELP_SEND_DOCS_FEEDBACK);
 	p->add_icon_shortcut(gui_base->get_icon("Instance", "EditorIcons"), ED_SHORTCUT("editor/community", TTR("Community")), HELP_COMMUNITY);
 	p->add_separator();
+<<<<<<< HEAD
 	p->add_icon_shortcut(gui_base->get_icon("Godot", "EditorIcons"), ED_SHORTCUT("editor/about", TTR("About Godot")), HELP_ABOUT);
+=======
+	p->add_icon_shortcut(gui_base->get_icon("Godot", "EditorIcons"), ED_SHORTCUT("editor/about", TTR("About")), HELP_ABOUT);
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	p->add_icon_shortcut(gui_base->get_icon("Heart", "EditorIcons"), ED_SHORTCUT("editor/support_development", TTR("Support Godot Development")), HELP_SUPPORT_GODOT_DEVELOPMENT);
 
 	HBoxContainer *play_hb = memnew(HBoxContainer);

@@ -1425,13 +1425,25 @@ void RasterizerCanvasGLES3::render_joined_item(const BItemJoined &p_bij, RenderI
 	}
 	if (unshaded || (state.canvas_item_modulate.a > 0.001 && (!r_ris.shader_cache || r_ris.shader_cache->canvas_item.light_mode != RasterizerStorageGLES3::Shader::CanvasItem::LIGHT_MODE_LIGHT_ONLY) && !p_ci->light_masked)) {
 		RasterizerStorageGLES3::Material *material_ptr = nullptr;
+<<<<<<< HEAD
 		render_joined_item_commands(p_bij, nullptr, reclip, material_ptr, false, r_ris);
+=======
+		render_joined_item_commands(p_bij, NULL, reclip, material_ptr, false, r_ris);
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	}
 
 	if ((blend_mode == RasterizerStorageGLES3::Shader::CanvasItem::BLEND_MODE_MIX || blend_mode == RasterizerStorageGLES3::Shader::CanvasItem::BLEND_MODE_PMALPHA) && r_ris.item_group_light && !unshaded) {
 		Light *light = r_ris.item_group_light;
 		bool light_used = false;
 		VS::CanvasLightMode mode = VS::CANVAS_LIGHT_MODE_ADD;
+<<<<<<< HEAD
+=======
+
+		// we leave this set to 1, 1, 1, 1 if using software because the colors are baked into the vertices
+		if (p_bij.is_single_item()) {
+			state.canvas_item_modulate = p_ci->final_modulate; // remove the canvas modulate
+		}
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 		// we leave this set to 1, 1, 1, 1 if using software because the colors are baked into the vertices
 		if (p_bij.is_single_item()) {
@@ -1533,10 +1545,17 @@ void RasterizerCanvasGLES3::render_joined_item(const BItemJoined &p_bij, RenderI
 				// this can greatly reduce fill rate ..
 				// at the cost of glScissor commands, so is optional
 				if (!bdata.settings_scissor_lights || r_ris.current_clip) {
+<<<<<<< HEAD
 					render_joined_item_commands(p_bij, nullptr, reclip, nullptr, true, r_ris);
 				} else {
 					bool scissor = _light_scissor_begin(p_bij.bounding_rect, light->xform_cache, light->rect_cache);
 					render_joined_item_commands(p_bij, nullptr, reclip, nullptr, true, r_ris);
+=======
+					render_joined_item_commands(p_bij, NULL, reclip, nullptr, true, r_ris);
+				} else {
+					bool scissor = _light_scissor_begin(p_bij.bounding_rect, light->xform_cache, light->rect_cache);
+					render_joined_item_commands(p_bij, NULL, reclip, nullptr, true, r_ris);
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 					if (scissor) {
 						glDisable(GL_SCISSOR_TEST);
 					}

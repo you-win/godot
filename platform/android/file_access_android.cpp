@@ -115,8 +115,14 @@ uint8_t FileAccessAndroid::get_8() const {
 	return byte;
 }
 
+<<<<<<< HEAD
 uint64_t FileAccessAndroid::get_buffer(uint8_t *p_dst, uint64_t p_length) const {
 	ERR_FAIL_COND_V(!p_dst && p_length > 0, -1);
+=======
+int FileAccessAndroid::get_buffer(uint8_t *p_dst, int p_length) const {
+	ERR_FAIL_COND_V(!p_dst && p_length > 0, -1);
+	ERR_FAIL_COND_V(p_length < 0, -1);
+>>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 	int r = AAsset_read(a, p_dst, p_length);
 
