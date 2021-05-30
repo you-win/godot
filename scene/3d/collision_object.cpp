@@ -46,15 +46,6 @@ void CollisionObject::_notification(int p_what) {
 				_update_debug_shapes();
 			}
 		} break;
-<<<<<<< HEAD
-=======
-
-		case NOTIFICATION_EXIT_TREE: {
-			if (debug_shapes_count > 0) {
-				_clear_debug_shapes();
-			}
-		} break;
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 		case NOTIFICATION_EXIT_TREE: {
 			if (debug_shapes_count > 0) {
@@ -101,10 +92,7 @@ void CollisionObject::_notification(int p_what) {
 				PhysicsServer::get_singleton()->area_set_space(rid, RID());
 			} else {
 				PhysicsServer::get_singleton()->body_set_space(rid, RID());
-<<<<<<< HEAD
 			}
-=======
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 		} break;
 	}
@@ -195,33 +183,6 @@ void CollisionObject::_update_pickable() {
 		PhysicsServer::get_singleton()->area_set_ray_pickable(rid, pickable);
 	} else {
 		PhysicsServer::get_singleton()->body_set_ray_pickable(rid, pickable);
-	}
-}
-
-bool CollisionObject::_are_collision_shapes_visible() {
-	return is_inside_tree() && get_tree()->is_debugging_collisions_hint() && !Engine::get_singleton()->is_editor_hint();
-}
-
-void CollisionObject::_update_shape_data(uint32_t p_owner) {
-	if (_are_collision_shapes_visible()) {
-		if (debug_shapes_to_update.empty()) {
-			call_deferred("_update_debug_shapes");
-		}
-		debug_shapes_to_update.insert(p_owner);
-	}
-}
-
-void CollisionObject::_shape_changed(const Ref<Shape> &p_shape) {
-	for (Map<uint32_t, ShapeData>::Element *E = shapes.front(); E; E = E->next()) {
-		ShapeData &shapedata = E->get();
-		ShapeData::ShapeBase *shapes = shapedata.shapes.ptrw();
-		for (int i = 0; i < shapedata.shapes.size(); i++) {
-			ShapeData::ShapeBase &s = shapes[i];
-			if (s.shape == p_shape && s.debug_shape.is_valid()) {
-				Ref<Mesh> mesh = s.shape->get_debug_mesh();
-				VS::get_singleton()->instance_set_base(s.debug_shape, mesh->get_rid());
-			}
-		}
 	}
 }
 

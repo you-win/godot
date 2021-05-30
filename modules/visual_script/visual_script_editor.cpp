@@ -247,10 +247,6 @@ protected:
 		}
 
 		if (String(p_name) == "hint") {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 			Dictionary dc = d.duplicate();
 			dc["hint"] = p_value;
 			undo_redo->create_action(TTR("Set Variable Type"));
@@ -261,11 +257,6 @@ protected:
 			undo_redo->commit_action();
 			return true;
 		}
-<<<<<<< HEAD
-=======
-
-		if (String(p_name) == "hint_string") {
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 		if (String(p_name) == "hint_string") {
 			Dictionary dc = d.duplicate();

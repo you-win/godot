@@ -1840,13 +1840,6 @@ PREAMBLE(bool)::_software_skin_poly(RasterizerCanvas::Item::CommandPolygon *p_po
 		// because we want the poly transform RELATIVE to the base skeleton.
 		Transform2D item_transform = skel_trans_inv * p_item->final_transform;
 
-<<<<<<< HEAD
-=======
-		// instead of using the p_item->xform we use the final transform,
-		// because we want the poly transform RELATIVE to the base skeleton.
-		Transform2D item_transform = skel_trans_inv * p_item->final_transform;
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 		Transform2D item_transform_inv = item_transform.affine_inverse();
 
 		for (int n = 0; n < num_verts; n++) {
@@ -2547,12 +2540,7 @@ PREAMBLE(void)::flush_render_batches(RasterizerCanvas::Item *p_first_item, Raste
 }
 
 PREAMBLE(void)::render_joined_item_commands(const BItemJoined &p_bij, RasterizerCanvas::Item *p_current_clip, bool &r_reclip, typename T_STORAGE::Material *p_material, bool p_lit, const RenderItemState &p_ris) {
-<<<<<<< HEAD
 	RasterizerCanvas::Item *item = nullptr;
-=======
-
-	RasterizerCanvas::Item *item = 0;
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	RasterizerCanvas::Item *first_item = bdata.item_refs[p_bij.first_item_ref].item;
 
 	// fill_state and bdata have once off setup per joined item, and a smaller reset on flush
@@ -3082,10 +3070,6 @@ void C_PREAMBLE::_translate_batches_to_larger_FVF(uint32_t p_sequence_batch_type
 
 			// create the colored verts (only if not default)
 			if (source_batch.type != RasterizerStorageCommon::BT_DEFAULT) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 				int first_vert = source_batch.first_vert;
 				int num_verts = source_batch.get_num_verts();
 				int end_vert = first_vert + num_verts;

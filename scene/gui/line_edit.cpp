@@ -83,10 +83,6 @@ void LineEdit::_gui_input(Ref<InputEvent> p_event) {
 				selection.creating = true;
 
 			} else {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 				if (selecting_enabled) {
 					if (!b->is_doubleclick() && (OS::get_singleton()->get_ticks_msec() - selection.last_dblclk) < 600) {
 						// Triple-click select all.

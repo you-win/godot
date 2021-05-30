@@ -537,11 +537,6 @@ VoxelLightBaker::MaterialCache VoxelLightBaker::_get_material_cache(Ref<Material
 	MaterialCache mc;
 
 	Ref<Image> empty;
-<<<<<<< HEAD
-=======
-
-	if (mat.is_valid()) {
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 	if (mat.is_valid()) {
 		Ref<Texture> albedo_tex = mat->get_texture(SpatialMaterial::TEXTURE_ALBEDO);
@@ -556,21 +551,12 @@ VoxelLightBaker::MaterialCache VoxelLightBaker::_get_material_cache(Ref<Material
 
 		if (mat->get_feature(SpatialMaterial::FEATURE_EMISSION)) {
 			Ref<Texture> emission_tex = mat->get_texture(SpatialMaterial::TEXTURE_EMISSION);
-<<<<<<< HEAD
 
 			Color emission_col = mat->get_emission();
 			float emission_energy = mat->get_emission_energy();
 
 			Ref<Image> img_emission;
 
-=======
-
-			Color emission_col = mat->get_emission();
-			float emission_energy = mat->get_emission_energy();
-
-			Ref<Image> img_emission;
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 			if (emission_tex.is_valid()) {
 				img_emission = emission_tex->get_data();
 			}

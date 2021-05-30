@@ -1013,10 +1013,6 @@ void Basis::set_diagonal(const Vector3 &p_diag) {
 }
 
 Basis Basis::slerp(const Basis &p_to, const real_t &p_weight) const {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	//consider scale
 	Quat from(*this);
 	Quat to(p_to);

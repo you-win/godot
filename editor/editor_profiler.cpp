@@ -613,18 +613,6 @@ Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
 		return res;
 	}
 
-<<<<<<< HEAD
-	// signatures
-	Vector<String> signatures;
-	const Vector<EditorProfiler::Metric::Category> &categories = frame_metrics[0].categories;
-
-	for (int j = 0; j < categories.size(); j++) {
-		const EditorProfiler::Metric::Category &c = categories[j];
-		signatures.push_back(c.signature);
-
-		for (int k = 0; k < c.items.size(); k++) {
-			signatures.push_back(c.items[k].signature);
-=======
 	// Different metrics may contain different number of categories.
 	Set<StringName> possible_signatures;
 	for (int i = 0; i < frame_metrics.size(); i++) {
@@ -637,7 +625,6 @@ Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
 		}
 		for (Map<StringName, Metric::Category::Item *>::Element *E = m.item_ptrs.front(); E; E = E->next()) {
 			possible_signatures.insert(E->key());
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 		}
 	}
 
@@ -671,22 +658,12 @@ Vector<Vector<String>> EditorProfiler::get_data_as_csv() const {
 			continue;
 		}
 
-<<<<<<< HEAD
-		for (int j = 0; j < frame_cat.size(); j++) {
-			const EditorProfiler::Metric::Category &c = frame_cat[j];
-			values.write[it++] = String::num_real(c.total_time);
-
-			for (int k = 0; k < c.items.size(); k++) {
-				values.write[it++] = String::num_real(c.items[k].total);
-			}
-=======
 		// Don't keep old values since there may be empty cells.
 		values.clear();
 		values.resize(possible_signatures.size());
 
 		for (Map<StringName, Metric::Category *>::Element *E = m.category_ptrs.front(); E; E = E->next()) {
 			values.write[sig_map[E->key()]] = String::num_real(E->value()->total_time);
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 		}
 		for (Map<StringName, Metric::Category::Item *>::Element *E = m.item_ptrs.front(); E; E = E->next()) {
 			values.write[sig_map[E->key()]] = String::num_real(E->value()->total);

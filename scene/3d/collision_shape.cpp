@@ -208,9 +208,6 @@ CollisionShape::CollisionShape() {
 CollisionShape::~CollisionShape() {
 	if (!shape.is_null()) {
 		shape->unregister_owner(this);
-<<<<<<< HEAD
 	}
-=======
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	//VisualServer::get_singleton()->free(indicator);
 }

@@ -1275,11 +1275,7 @@ bool KinematicBody2D::is_sync_to_physics_enabled() const {
 }
 
 void KinematicBody2D::_direct_state_changed(Object *p_state) {
-<<<<<<< HEAD
 	if (!sync_to_physics) {
-=======
-	if (!sync_to_physics)
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 		return;
 	}
 

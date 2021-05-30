@@ -330,19 +330,10 @@ bool CSGShapeSpatialGizmoPlugin::is_selectable_when_hidden() const {
 void CSGShapeSpatialGizmoPlugin::redraw(EditorSpatialGizmo *p_gizmo) {
 	p_gizmo->clear();
 
-<<<<<<< HEAD
 	CSGShape *cs = Object::cast_to<CSGShape>(p_gizmo->get_spatial_node());
 
 	PoolVector<Vector3> faces = cs->get_brush_faces();
 
-=======
-	p_gizmo->clear();
-
-	CSGShape *cs = Object::cast_to<CSGShape>(p_gizmo->get_spatial_node());
-
-	PoolVector<Vector3> faces = cs->get_brush_faces();
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	if (faces.size() == 0) {
 		return;
 	}

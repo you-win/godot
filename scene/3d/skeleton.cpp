@@ -434,13 +434,6 @@ Transform Skeleton::get_bone_global_rest(int p_bone) const {
 	return tform.affine_inverse();
 }
 
-Transform Skeleton::get_bone_global_pose_no_override(int p_bone) const {
-	ERR_FAIL_INDEX_V(p_bone, bones.size(), Transform());
-	if (dirty)
-		const_cast<Skeleton *>(this)->notification(NOTIFICATION_UPDATE_SKELETON);
-	return bones[p_bone].pose_global_no_override;
-}
-
 // skeleton creation api
 void Skeleton::add_bone(const String &p_name) {
 	ERR_FAIL_COND(p_name == "" || p_name.find(":") != -1 || p_name.find("/") != -1);

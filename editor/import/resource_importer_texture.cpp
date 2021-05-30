@@ -393,10 +393,6 @@ Error ResourceImporterTexture::import(const String &p_source_file, const String 
 	int tex_flags = 0;
 	if (repeat > 0) {
 		tex_flags |= Texture::FLAG_REPEAT;
-<<<<<<< HEAD
-	}
-	if (repeat == 2) {
-=======
 
 		const bool min_gles3 = GLOBAL_GET("rendering/quality/driver/driver_name") == "GLES3" &&
 							   !GLOBAL_GET("rendering/quality/driver/fallback_to_gles2");
@@ -413,8 +409,7 @@ Error ResourceImporterTexture::import(const String &p_source_file, const String 
 			}
 		}
 	}
-	if (repeat == 2)
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
+	if (repeat == 2) {
 		tex_flags |= Texture::FLAG_MIRRORED_REPEAT;
 	}
 	if (filter) {

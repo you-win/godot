@@ -107,10 +107,6 @@ Vector3 Quat::get_euler_yxz() const {
 }
 
 void Quat::operator*=(const Quat &p_q) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	set(w * p_q.x + x * p_q.w + y * p_q.z - z * p_q.y,
 			w * p_q.y + y * p_q.w + z * p_q.x - x * p_q.z,
 			w * p_q.z + z * p_q.w + x * p_q.y - y * p_q.x,
@@ -118,10 +114,6 @@ void Quat::operator*=(const Quat &p_q) {
 }
 
 Quat Quat::operator*(const Quat &p_q) const {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	Quat r = *this;
 	r *= p_q;
 	return r;

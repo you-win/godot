@@ -232,10 +232,6 @@ _FORCE_INLINE_ bool Vector2::operator!=(const Vector2 &p_vec2) const {
 }
 
 Vector2 Vector2::linear_interpolate(const Vector2 &p_to, real_t p_weight) const {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	Vector2 res = *this;
 
 	res.x += (p_weight * (p_to.x - x));
@@ -259,10 +255,6 @@ Vector2 Vector2::direction_to(const Vector2 &p_to) const {
 }
 
 Vector2 Vector2::linear_interpolate(const Vector2 &p_a, const Vector2 &p_b, real_t p_weight) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	Vector2 res = p_a;
 
 	res.x += (p_weight * (p_b.x - p_a.x));

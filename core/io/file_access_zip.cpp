@@ -67,11 +67,7 @@ static long godot_tell(voidpf opaque, voidpf stream) {
 static long godot_seek(voidpf opaque, voidpf stream, uLong offset, int origin) {
 	FileAccess *f = (FileAccess *)stream;
 
-<<<<<<< HEAD
-	uint64_t pos = offset;
-=======
 	int pos = offset;
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 	switch (origin) {
 		case ZLIB_FILEFUNC_SEEK_CUR:
 			pos = f->get_position() + offset;
@@ -233,10 +229,6 @@ ZipArchive::ZipArchive() {
 
 ZipArchive::~ZipArchive() {
 	for (int i = 0; i < packages.size(); i++) {
-<<<<<<< HEAD
-		FileAccess *f = (FileAccess *)unzGetOpaque(packages[i].zfile);
-=======
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 		unzClose(packages[i].zfile);
 	}
 

@@ -812,11 +812,7 @@ void MeshInstance::create_debug_tangents() {
 		add_child(mi);
 #ifdef TOOLS_ENABLED
 
-<<<<<<< HEAD
 		if (is_inside_tree() && this == get_tree()->get_edited_scene_root()) {
-=======
-		if (is_inside_tree() && this == get_tree()->get_edited_scene_root())
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 			mi->set_owner(this);
 		} else {
 			mi->set_owner(get_owner());

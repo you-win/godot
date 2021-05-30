@@ -304,19 +304,6 @@ void VisualShaderNodeCustom::set_default_input_values(const Array &p_values) {
 void VisualShaderNodeCustom::_set_input_port_default_value(int p_port, const Variant &p_value) {
 	VisualShaderNode::set_input_port_default_value(p_port, p_value);
 }
-<<<<<<< HEAD
-=======
-
-bool VisualShaderNodeCustom::_is_initialized() {
-	return is_initialized;
-}
-
-void VisualShaderNodeCustom::_set_initialized(bool p_enabled) {
-	is_initialized = p_enabled;
-}
-
-void VisualShaderNodeCustom::_bind_methods() {
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 
 bool VisualShaderNodeCustom::_is_initialized() {
 	return is_initialized;

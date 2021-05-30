@@ -92,10 +92,6 @@ struct Color {
 	Color contrasted() const;
 
 	_FORCE_INLINE_ Color linear_interpolate(const Color &p_to, float p_weight) const {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7610409b8a14b8499763efa76578795c755a846d
 		Color res = *this;
 
 		res.r += (p_weight * (p_to.r - r));
