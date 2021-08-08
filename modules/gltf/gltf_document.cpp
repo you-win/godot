@@ -53,7 +53,9 @@
 #include "core/version.h"
 #include "core/version_hash.gen.h"
 #include "drivers/png/png_driver_common.h"
+#ifdef TOOLS_ENABLED
 #include "editor/import/resource_importer_scene.h"
+#endif
 #include "scene/2d/node_2d.h"
 #include "scene/3d/bone_attachment.h"
 #include "scene/3d/camera.h"
