@@ -1,3 +1,8 @@
+## My changes
+* GLTF importing available in release builds
+* stdout/stderr redirection (aka redirected so messages are accessible via GDScript)
+* TOML support
+
 # Godot Engine
 
 <p align="center">
