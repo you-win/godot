@@ -1,2 +1,3 @@
 https://github.com/you-win/youwin-godot-module.git
 #https://github.com/you-win/spout-gd.git
+https://github.com/you-win/ruby-gd.git
